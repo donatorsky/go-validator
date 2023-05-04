@@ -20,6 +20,7 @@ package main
 import (
     "context"
     "errors"
+    "encoding/json"
     "fmt"
     "time"
 
@@ -140,26 +141,26 @@ func main() {
 		}
 	)
 
-	fmt.Println("ForMapWithContext")
-	forMapErrorsBag := validator.ForMapWithContext(context.Background(), mapData, allRules)
-	fmt.Println(forMapErrorsBag)
+    fmt.Println("ForMapWithContext")
+    forMapErrorsBag := validator.ForMapWithContext(context.Background(), mapData, allRules)
+    fmt.Println(forMapErrorsBag, "\n", toJSON(forMapErrorsBag))
 
-	fmt.Println("\nForStruct")
-	forStructErrorsBag := validator.ForStructWithContext(context.Background(), ptr(data{}), allRules)
-	fmt.Println(forStructErrorsBag)
+    fmt.Println("\nForStructWithContext")
+    forStructErrorsBag := validator.ForStructWithContext(context.Background(), ptr(data{}), allRules)
+    fmt.Println(forStructErrorsBag, "\n", toJSON(forStructErrorsBag))
 
-	fmt.Println("\nForSlice")
-	forSliceErrorsBag := validator.ForSliceWithContext(context.Background(), ptr([]int{1, 2, 3}),
-		rule.Min(150),
-	)
-	fmt.Println(forSliceErrorsBag)
+    fmt.Println("\nForSliceWithContext")
+    forSliceErrorsBag := validator.ForSliceWithContext(context.Background(), ptr([]int{1, 2, 3}),
+        rule.Min(150),
+    )
+    fmt.Println(forSliceErrorsBag, "\n", toJSON(forSliceErrorsBag))
 
-	fmt.Println("\nForValue (simple)")
-	forValueErrors := validator.ForValueWithContext(context.Background(), ptr(ptr(6)),
-		rule.Required(),
-		rule.Min(150),
-	)
-	fmt.Println(forValueErrors)
+    fmt.Println("\nForValueWithContext (simple)")
+    forValueErrors := validator.ForValueWithContext(context.Background(), ptr(ptr(6)),
+        rule.Required(),
+        rule.Min(150),
+    )
+    fmt.Println(forValueErrors, "\n", toJSON(forValueErrors))
 }
 
 type data struct {
@@ -173,35 +174,254 @@ type data struct {
 func ptr[T any](v T) *T {
 	return &v
 }
+
+func toJSON(data any) string {
+    var buf bytes.Buffer
+    encoder := json.NewEncoder(&buf)
+    encoder.SetIndent("", "  ")
+
+    _ = encoder.Encode(data)
+
+    return buf.String()
+}
 ```
 
 Produces:
 ```text
 ForMapWithContext
 8 field(s) failed:
+int: [6][minRule{Threshold=150} minRule{Threshold=1240} minRule{Threshold=125.01} minRule{Threshold=125.01} minRule{Threshold=400} customRule{Err="nie dzielimy przez 3"}]
+*int: [9][minRule{Threshold=150} minRule{Threshold=1240} minRule{Threshold=125.01} minRule{Threshold=125.01} minRule{Threshold=200} minRule{Threshold=300} maxRule{Threshold=90} maxRule{Threshold=100} minRule{Threshold=400}]
 **int: [9][minRule{Threshold=150} minRule{Threshold=1240} minRule{Threshold=125.01} minRule{Threshold=125.01} minRule{Threshold=200} minRule{Threshold=300} maxRule{Threshold=90} maxRule{Threshold=100} minRule{Threshold=400}]
-child.id: [2][minRule{Threshold=500} floatRule{ExpectedType="float32", ActualType="int"}]
+child.id: [2][floatRule{ExpectedType="float32", ActualType="int"} minRule{Threshold=500}]
 array.1: [1][requiredRule{}]
 array.2: [1][inRule{Values=[Foo foo]}]
 array.3: [1][inRule{Values=[Foo foo]}]
-array.4: [2][stringRule{} inRule{Values=[Foo foo]}]
-int: [6][minRule{Threshold=150} minRule{Threshold=1240} minRule{Threshold=125.01} minRule{Threshold=125.01} minRule{Threshold=400} customRule{Err="nie dzielimy przez 3"}]
-*int: [9][minRule{Threshold=150} minRule{Threshold=1240} minRule{Threshold=125.01} minRule{Threshold=125.01} minRule{Threshold=200} minRule{Threshold=300} maxRule{Threshold=90} maxRule{Threshold=100} minRule{Threshold=400}]
+array.4: [2][stringRule{} inRule{Values=[Foo foo]}] 
+ {
+  "**int": [
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 150
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 1240
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 125.01
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 125.01
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 200
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 300
+    },
+    {
+      "rule": "MAX.NUMBER",
+      "threshold": 90
+    },
+    {
+      "rule": "MAX.NUMBER",
+      "threshold": 100
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 400
+    }
+  ],
+  "*int": [
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 150
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 1240
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 125.01
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 125.01
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 200
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 300
+    },
+    {
+      "rule": "MAX.NUMBER",
+      "threshold": 90
+    },
+    {
+      "rule": "MAX.NUMBER",
+      "threshold": 100
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 400
+    }
+  ],
+  "array.1": [
+    {
+      "rule": "REQUIRED"
+    }
+  ],
+  "array.2": [
+    {
+      "rule": "IN",
+      "values": [
+        "Foo",
+        "foo"
+      ]
+    }
+  ],
+  "array.3": [
+    {
+      "rule": "IN",
+      "values": [
+        "Foo",
+        "foo"
+      ]
+    }
+  ],
+  "array.4": [
+    {
+      "rule": "STRING"
+    },
+    {
+      "rule": "IN",
+      "values": [
+        "Foo",
+        "foo"
+      ]
+    }
+  ],
+  "child.id": [
+    {
+      "rule": "INT",
+      "expected_type": "float32",
+      "actual_type": "int"
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 500
+    }
+  ],
+  "int": [
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 150
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 1240
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 125.01
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 125.01
+    },
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 400
+    },
+    {
+      "rule": "CUSTOM",
+      "error": "nie dzielimy przez 3"
+    }
+  ]
+}
+
 
 ForStructWithContext
 5 field(s) failed:
-**int: [1][requiredRule{}]
-child.id: [2][requiredRule{} requiredRule{}]
-array.*: [1][requiredRule{}]
 int: [1][requiredRule{}]
 *int: [1][requiredRule{}]
+**int: [1][requiredRule{}]
+child.id: [2][requiredRule{} requiredRule{}]
+array.*: [1][requiredRule{}] 
+ {
+  "**int": [
+    {
+      "rule": "REQUIRED"
+    }
+  ],
+  "*int": [
+    {
+      "rule": "REQUIRED"
+    }
+  ],
+  "array.*": [
+    {
+      "rule": "REQUIRED"
+    }
+  ],
+  "child.id": [
+    {
+      "rule": "REQUIRED"
+    },
+    {
+      "rule": "REQUIRED"
+    }
+  ],
+  "int": [
+    {
+      "rule": "REQUIRED"
+    }
+  ]
+}
+
 
 ForSliceWithContext
 3 field(s) failed:
 0: [1][minRule{Threshold=150}]
 1: [1][minRule{Threshold=150}]
-2: [1][minRule{Threshold=150}]
+2: [1][minRule{Threshold=150}] 
+ {
+  "0": [
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 150
+    }
+  ],
+  "1": [
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 150
+    }
+  ],
+  "2": [
+    {
+      "rule": "MIN.NUMBER",
+      "threshold": 150
+    }
+  ]
+}
+
 
 ForValueWithContext (simple)
-[minRule{Threshold=150}]
+[minRule{Threshold=150}] 
+ [
+  {
+    "rule": "MIN.NUMBER",
+    "threshold": 150
+  }
+]
 ```
