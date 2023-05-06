@@ -80,26 +80,25 @@ func ForValueWithContext[In any](ctx context.Context, value In, rules ...vr.Rule
 		value,
 		rules,
 		fieldValue{
-			pattern: false,
-			field:   "*",
-			value:   value,
+			field: "_",
+			value: value,
 		},
 		errorsBag,
 	)
 
-	return errorsBag.Get("*")
+	return errorsBag.Get("_")
 }
 
 func applyRules(ctx context.Context, data any, rules []vr.Rule, fieldValue fieldValue, errorsBag ve.ErrorsBag) {
 	anyRuleFailed := false
 	i := newRecursiveIterator(rules, ctx, fieldValue.value, data)
 
+	value := fieldValue.value
+
 	for i.Valid() {
 		rule := i.Current()
 
 		var err ve.ValidationError
-
-		value := fieldValue.value
 
 		if value, err = rule.Apply(ctx, value, data); err != nil {
 			if compositeError, ok := err.(ve.CompositeValidationError); ok {

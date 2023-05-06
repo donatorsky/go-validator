@@ -8,11 +8,11 @@ func NewErrorsBag() ErrorsBag {
 
 type ErrorsBag map[string][]ValidationError
 
-func (b ErrorsBag) Add(field string, message ValidationError) {
+func (b ErrorsBag) Add(field string, errors ...ValidationError) {
 	if _, exists := b[field]; !exists {
-		b[field] = []ValidationError{message}
+		b[field] = errors
 	} else {
-		b[field] = append(b[field], message)
+		b[field] = append(b[field], errors...)
 	}
 }
 
@@ -22,6 +22,12 @@ func (b ErrorsBag) Any() bool {
 
 func (b ErrorsBag) All() map[string][]ValidationError {
 	return b
+}
+
+func (b ErrorsBag) Has(field string) bool {
+	_, exists := b[field]
+
+	return exists
 }
 
 func (b ErrorsBag) Get(field string) []ValidationError {

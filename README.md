@@ -1,4 +1,5 @@
 # Go Validator
+
 A Laravel-like data validator for Go.
 
 [![GitHub license](https://img.shields.io/github/license/donatorsky/go-validator)](https://github.com/donatorsky/go-validator/blob/main/LICENSE)
@@ -28,6 +29,7 @@ Validates a `map[string]any`. You can specify a map of rules for each key and in
 Returns `ErrorsBag` with keys being the map keys of input map.
 
 #### Example
+
 ```go
 validator.ForMap(
     map[string]any{
@@ -69,13 +71,14 @@ validator.ForMap(
 
 Validates a struct. You can specify a map of rules for each field name and internal values (either slices, arrays, maps or structs).
 
-Note that you can also use custom name for a field using `validation` tag. 
+Note that you can also use custom name for a field using `validation` tag.
 
 You can also pass pointer which will be automatically dereferenced.
 
 Returns `ErrorsBag` with keys being the field names (or values from `validation` if provided) of input struct.
 
 #### Example
+
 ```go
 type SomeRequest struct {
     Foo int
@@ -134,6 +137,7 @@ You can also pass pointer which will be automatically dereferenced.
 Returns `ErrorsBag` with keys being the indices of input slice/array.
 
 #### Example
+
 ```go
 validator.ForSlice(
     []any{
@@ -157,6 +161,7 @@ If you pass a pointer, it will not be dereferenced.
 Returns a slice of `ValidationError`.
 
 #### Example
+
 ```go
 validator.ForValue(
     123,
@@ -171,9 +176,16 @@ validator.ForValue(
 
 ## Validation of nested objects
 
-When map or struct contains a nested object (e.g.: slice, array, map or struct), you can also validate every single value of it by using `*` wildcard symbol.
+It is possible to validate nested objects (i.e.: slice, array, map or struct) using the dot notation:
+
+- For slices and arrays: it refers to the index of element, e.g.: given `"slice": []int{1, 2, 3},`, `slice.1` refers to the value `2`.
+- For maps: it refers to the element by given key, e.g.: given `"map": map[string]int{"foo": 1, "bar": 2, "baz": 3},`, `map.bar` refers to the value `2`.
+- For structs: it refers to the field with same `validation` tag or field name if tag is not present, e.g.: given `"struct": {Foo: 1, Bar: 2, Baz: 3},`, `struct.Bar` refers to the value `2`.
+
+You can also validate every single value of slice and array by using `*` wildcard symbol.
 
 #### Example
+
 ```go
 type SomeRequest struct {
     SingleValue    int
@@ -401,6 +413,7 @@ Some rules stop validation of given element once they fail (e.g.: `Required` sin
 You can also manually stop validation by using `Bail` pseudo-rule.
 
 #### Example
+
 ```go
 validator.ForValue(
     "123",
@@ -427,6 +440,7 @@ Once conditional rule is valid, its rules will be merged to the main list of rul
 This pseudo-rule allows for adding rules based on simple boolean value.
 
 #### Example
+
 ```go
 validator.ForValue(
     123,
@@ -448,6 +462,7 @@ validator.ForValue(
 ```
 
 The example above becomes:
+
 ```go
 validator.ForValue(
     123,
@@ -469,6 +484,7 @@ This pseudo-rule allows for adding rules based on a custom logic.
 It receives the `context` passed to the validator, the currently validated `value` and the original `data` passed to the validator.
 
 #### Example
+
 ```go
 validator.ForValue(
     123,
@@ -496,6 +512,7 @@ validator.ForValue(
 ```
 
 The example above becomes:
+
 ```go
 validator.ForValue(
     123,
@@ -525,6 +542,7 @@ The `rule.Custom` rule can return any `error`. In that case, the error is added 
 Since the value can be anything, including pointer, there is a helper function `rule.Dereference` that returns the underlying value.
 
 #### Example
+
 ```go
 import ve "github.com/donatorsky/go-validator/error"
 
@@ -756,6 +774,7 @@ func toJSON(data any) string {
 ```
 
 Produces:
+
 ```text
 ForMapWithContext
 8 field(s) failed:

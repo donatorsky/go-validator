@@ -1,8 +1,8 @@
 package validator
 
 import (
-	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 
 	vr "github.com/donatorsky/go-validator/rule"
@@ -16,72 +16,75 @@ func newFieldsIterator(field string, data any) <-chan fieldValue {
 
 		fieldParts := strings.Split(field, ".")
 
-		iterateOverFieldPart(fieldsValues, "", fieldParts, data, false)
+		iterateOverFieldPart(fieldsValues, make([]string, len(fieldParts)), fieldParts, 0, data)
 	}()
 
 	return fieldsValues
 }
 
 type fieldValue struct {
-	pattern bool
-	field   string
-	value   any
-	isNil   bool
+	field string
+	value any
 }
 
-func iterateOverFieldPart(fieldsValues chan<- fieldValue, fieldName string, fieldParts []string, value any, pattern bool) {
-	if len(fieldParts) == 0 {
-		fv := fieldValue{
-			pattern: pattern,
-			field:   fieldName,
+func iterateOverFieldPart(fieldsValues chan<- fieldValue, fieldName []string, fieldParts []string, position int, value any) {
+	isNil := false
+	if value == nil {
+		isNil = true
+	} else {
+		value, isNil = vr.Dereference(value)
+	}
+
+	if isNil {
+		for idx := position; idx < len(fieldParts); idx++ {
+			fieldName[idx] = fieldParts[idx]
 		}
 
-		fv.value, fv.isNil = vr.Dereference(value)
-
-		fieldsValues <- fv
+		fieldsValues <- fieldValue{
+			field: strings.Join(fieldName, "."),
+			value: nil,
+		}
 
 		return
 	}
 
-	if fieldParts[0] == "*" {
-		if valueOf := reflect.ValueOf(value); valueOf.Kind() == reflect.Slice || valueOf.Kind() == reflect.Array {
+	if len(fieldParts) == position {
+		fieldsValues <- fieldValue{
+			field: strings.Join(fieldName, "."),
+			value: value,
+		}
+
+		return
+	}
+
+	valueOf := reflect.ValueOf(value)
+
+	if fieldParts[position] == "*" {
+		if valueOf.Kind() == reflect.Slice || valueOf.Kind() == reflect.Array {
 			for idx := 0; idx < valueOf.Len(); idx++ {
-				var subFieldName string
-				if len(fieldName) == 0 {
-					subFieldName = fmt.Sprintf("%d", idx)
-				} else {
-					subFieldName = fmt.Sprintf("%s.%d", fieldName, idx)
-				}
+				fieldName[position] = strconv.Itoa(idx)
 
-				iterateOverFieldPart(fieldsValues, subFieldName, fieldParts[1:], valueOf.Index(idx).Interface(), true)
-			}
-		} else {
-			fv := fieldValue{
-				pattern: true,
+				iterateOverFieldPart(fieldsValues, fieldName, fieldParts, position+1, valueOf.Index(idx).Interface())
 			}
 
-			remainingFields := strings.Join(fieldParts[1:], ".")
-			if len(remainingFields) != 0 {
-				remainingFields = fmt.Sprintf(".%s", remainingFields)
-			}
+			return
+		}
 
-			if len(fieldName) == 0 {
-				fv.field = fmt.Sprintf("*%s", remainingFields)
-			} else {
-				fv.field = fmt.Sprintf("%s.*%s", fieldName, remainingFields)
-			}
+		for idx := position; idx < len(fieldParts); idx++ {
+			fieldName[idx] = fieldParts[idx]
+		}
 
-			fv.value, fv.isNil = vr.Dereference(value)
-
-			fieldsValues <- fv
+		fieldsValues <- fieldValue{
+			value: nil,
+			field: strings.Join(fieldName, "."),
 		}
 
 		return
 	}
 
-	switch valueOf := reflect.ValueOf(value); valueOf.Kind() {
+	switch valueOf.Kind() {
 	case reflect.Map:
-		mapIndex := valueOf.MapIndex(reflect.ValueOf(fieldParts[0]))
+		mapIndex := valueOf.MapIndex(reflect.ValueOf(fieldParts[position]))
 		if mapIndex.IsValid() {
 			value = mapIndex.Interface()
 		} else {
@@ -89,7 +92,7 @@ func iterateOverFieldPart(fieldsValues chan<- fieldValue, fieldName string, fiel
 		}
 
 	case reflect.Struct:
-		fieldByName := valueOf.FieldByName(fieldParts[0])
+		fieldByName := valueOf.FieldByName(fieldParts[position])
 		if fieldByName.IsValid() {
 			value = fieldByName.Interface()
 		} else {
@@ -98,21 +101,27 @@ func iterateOverFieldPart(fieldsValues chan<- fieldValue, fieldName string, fiel
 			for idx := 0; idx < typeOf.NumField(); idx++ {
 				structField := typeOf.Field(idx)
 				nameFromTag := structField.Tag.Get("validation")
-				if nameFromTag != "" && nameFromTag == fieldParts[0] {
+				if nameFromTag != "" && nameFromTag == fieldParts[position] {
 					value = valueOf.FieldByName(structField.Name).Interface()
 				}
 			}
 		}
 
+	case reflect.Slice, reflect.Array:
+		idx, err := strconv.Atoi(fieldParts[position])
+		if err != nil || idx < 0 || idx >= valueOf.Len() {
+			value = nil
+
+			break
+		}
+
+		value = valueOf.Index(idx).Interface()
+
 	default:
 		value = nil
 	}
 
-	if len(fieldName) == 0 {
-		fieldName = fieldParts[0]
-	} else if len(fieldName) > 0 && len(fieldParts) == 1 {
-		fieldName += "." + fieldParts[0]
-	}
+	fieldName[position] = fieldParts[position]
 
-	iterateOverFieldPart(fieldsValues, fieldName, fieldParts[1:], value, pattern)
+	iterateOverFieldPart(fieldsValues, fieldName, fieldParts, position+1, value)
 }
