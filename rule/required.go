@@ -16,7 +16,7 @@ type requiredRule struct {
 
 func (r *requiredRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
 	if value == nil {
-		r.bailed = true
+		r.MarkBailed()
 
 		return nil, NewRequiredValidationError()
 	}

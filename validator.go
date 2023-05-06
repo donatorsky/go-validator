@@ -94,12 +94,12 @@ func applyRules(ctx context.Context, data any, rules []vr.Rule, fieldValue field
 	anyRuleFailed := false
 	i := newRecursiveIterator(rules, ctx, fieldValue.value, data)
 
+	value := fieldValue.value
+
 	for i.Valid() {
 		rule := i.Current()
 
 		var err ve.ValidationError
-
-		value := fieldValue.value
 
 		if value, err = rule.Apply(ctx, value, data); err != nil {
 			if compositeError, ok := err.(ve.CompositeValidationError); ok {

@@ -24,6 +24,10 @@ type Bailer struct {
 	bailed bool
 }
 
+func (b *Bailer) MarkBailed() {
+	b.bailed = true
+}
+
 func (b *Bailer) Bails() bool {
 	defer func() { b.bailed = false }()
 

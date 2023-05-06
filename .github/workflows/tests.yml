@@ -1,0 +1,53 @@
+name: Tests
+
+on:
+  pull_request:
+
+  push:
+    branches:
+      - main
+
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  test:
+
+    strategy:
+      matrix:
+        go-version:
+          - '1.18'
+          - '1.19'
+          - '1.20'
+
+        operating-system:
+          - 'ubuntu-latest'
+          - 'macos-latest'
+          - 'windows-latest'
+
+    runs-on: ${{ matrix.operating-system }}
+    name: 'Go ${{ matrix.go-version }}: Test on ${{ matrix.operating-system }}'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - uses: actions/cache@v3
+        id: mod-cache
+        with:
+          path: ~/go/pkg/mod
+          key: os-${{ matrix.operating-system }}-go-${{ hashFiles('**/go.mod', '**/go.sum') }}
+          restore-keys: os-${{ matrix.operating-system }}-go-
+
+      - name: Install dependencies
+        if: steps.mod-cache.outputs.cache-hit != 'true'
+        run: go mod download
+
+      - name: Run tests
+        timeout-minutes: 3
+        run: go test ./...

@@ -24,6 +24,12 @@ func (b ErrorsBag) All() map[string][]ValidationError {
 	return b
 }
 
+func (b ErrorsBag) Has(field string) bool {
+	_, exists := b[field]
+
+	return exists
+}
+
 func (b ErrorsBag) Get(field string) []ValidationError {
 	if errors, exists := b[field]; exists {
 		return errors
