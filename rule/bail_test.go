@@ -1,36 +1,79 @@
 package rule
 
 import (
-	"fmt"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
-func Test_bailRule(t *testing.T) {
+func Test_BailRule(t *testing.T) {
 	// given
-	for ttIdx, tt := range []struct {
-		value any
-	}{
-		{value: nil},
-		{value: 1},
-		{value: 1.0},
-		{value: true},
-		{value: []int{}},
-		{value: map[string]int{}},
-	} {
-		t.Run(fmt.Sprintf("Test data #%d", ttIdx), func(t *testing.T) {
-			rule := Bail()
+	for ttIdx, tt := range bailRuleDataProvider() {
+		runRuleTestCase(t, ttIdx, tt)
+	}
+}
 
-			// when
-			newValue, err := rule.Apply(nil, tt.value, nil)
+func BenchmarkBailRule(b *testing.B) {
+	for ttIdx, tt := range bailRuleDataProvider() {
+		runRuleBenchmark(b, ttIdx, tt)
+	}
+}
 
-			require.True(t, rule.Bails())
-
-			// then
-			require.NoError(t, err)
-			require.Nil(t, newValue)
-			require.True(t, rule.Bails())
-		})
+func bailRuleDataProvider() []*ruleTestCaseData {
+	return []*ruleTestCaseData{
+		{
+			rule:             Bail(),
+			value:            nil,
+			expectedNewValue: nil,
+			expectedError:    nil,
+			expectedToBail:   true,
+		},
+		{
+			rule:             Bail(),
+			value:            1,
+			expectedNewValue: nil,
+			expectedError:    nil,
+			expectedToBail:   true,
+		},
+		{
+			rule:             Bail(),
+			value:            1.2,
+			expectedNewValue: nil,
+			expectedError:    nil,
+			expectedToBail:   true,
+		},
+		{
+			rule:             Bail(),
+			value:            1 + 2i,
+			expectedNewValue: nil,
+			expectedError:    nil,
+			expectedToBail:   true,
+		},
+		{
+			rule:             Bail(),
+			value:            true,
+			expectedNewValue: nil,
+			expectedError:    nil,
+			expectedToBail:   true,
+		},
+		{
+			rule:             Bail(),
+			value:            []int{},
+			expectedNewValue: nil,
+			expectedError:    nil,
+			expectedToBail:   true,
+		},
+		{
+			rule:             Bail(),
+			value:            [1]int{},
+			expectedNewValue: nil,
+			expectedError:    nil,
+			expectedToBail:   true,
+		},
+		{
+			rule:             Bail(),
+			value:            map[string]int{},
+			expectedNewValue: nil,
+			expectedError:    nil,
+			expectedToBail:   true,
+		},
 	}
 }

@@ -23,12 +23,11 @@ type beforeComparable interface {
 }
 
 func (r beforeRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
-	comparableObj, ok := value.(beforeComparable)
-	if !ok {
-		return value, NewBeforeValidationError(r.before.Format(time.RFC3339Nano))
+	if _, isNil := Dereference(value); isNil {
+		return value, nil
 	}
 
-	if !comparableObj.Before(r.before) {
+	if comparableObj, ok := value.(beforeComparable); !ok || !comparableObj.Before(r.before) {
 		return value, NewBeforeValidationError(r.before.Format(time.RFC3339Nano))
 	}
 
@@ -51,5 +50,5 @@ type BeforeValidationError struct {
 }
 
 func (e BeforeValidationError) Error() string {
-	return fmt.Sprintf("beforeRule{After=%q}", e.Before)
+	return fmt.Sprintf("must be a date before %s", e.Before)
 }

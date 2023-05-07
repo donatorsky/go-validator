@@ -24,16 +24,15 @@ type afterOrEqualComparable interface {
 }
 
 func (r afterOrEqualRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
-	comparableObj, ok := value.(afterOrEqualComparable)
-	if !ok {
-		return value, NewAfterOrEqualValidationError(r.afterOrEqual.Format(time.RFC3339Nano))
-	}
-
-	if comparableObj.Equal(r.afterOrEqual) || comparableObj.After(r.afterOrEqual) {
+	if _, isNil := Dereference(value); isNil {
 		return value, nil
 	}
 
-	return value, NewAfterOrEqualValidationError(r.afterOrEqual.Format(time.RFC3339Nano))
+	if comparableObj, ok := value.(afterOrEqualComparable); !ok || !comparableObj.Equal(r.afterOrEqual) && !comparableObj.After(r.afterOrEqual) {
+		return value, NewAfterOrEqualValidationError(r.afterOrEqual.Format(time.RFC3339Nano))
+	}
+
+	return value, nil
 }
 
 func NewAfterOrEqualValidationError(afterOrEqual string) AfterOrEqualValidationError {
@@ -52,5 +51,5 @@ type AfterOrEqualValidationError struct {
 }
 
 func (e AfterOrEqualValidationError) Error() string {
-	return fmt.Sprintf("afterOrEqualRule{After=%q}", e.AfterOrEqual)
+	return fmt.Sprintf("must be a date after or equal to %s", e.AfterOrEqual)
 }

@@ -101,13 +101,7 @@ func applyRules(ctx context.Context, data any, rules []vr.Rule, fieldValue field
 		var err ve.ValidationError
 
 		if value, err = rule.Apply(ctx, value, data); err != nil {
-			if compositeError, ok := err.(ve.CompositeValidationError); ok {
-				for _, validationError := range compositeError.Errors() {
-					errorsBag.Add(fieldValue.field, validationError)
-				}
-			} else {
-				errorsBag.Add(fieldValue.field, err)
-			}
+			errorsBag.Add(fieldValue.field, err)
 
 			anyRuleFailed = true
 		}

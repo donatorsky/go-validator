@@ -24,16 +24,15 @@ type beforeOrEqualComparable interface {
 }
 
 func (r beforeOrEqualRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
-	comparableObj, ok := value.(beforeOrEqualComparable)
-	if !ok {
-		return value, NewBeforeOrEqualValidationError(r.beforeOrEqual.Format(time.RFC3339Nano))
-	}
-
-	if comparableObj.Equal(r.beforeOrEqual) || comparableObj.Before(r.beforeOrEqual) {
+	if _, isNil := Dereference(value); isNil {
 		return value, nil
 	}
 
-	return value, NewBeforeOrEqualValidationError(r.beforeOrEqual.Format(time.RFC3339Nano))
+	if comparableObj, ok := value.(beforeOrEqualComparable); !ok || !comparableObj.Equal(r.beforeOrEqual) && !comparableObj.Before(r.beforeOrEqual) {
+		return value, NewBeforeOrEqualValidationError(r.beforeOrEqual.Format(time.RFC3339Nano))
+	}
+
+	return value, nil
 }
 
 func NewBeforeOrEqualValidationError(beforeOrEqual string) BeforeOrEqualValidationError {
@@ -52,5 +51,5 @@ type BeforeOrEqualValidationError struct {
 }
 
 func (e BeforeOrEqualValidationError) Error() string {
-	return fmt.Sprintf("beforeOrEqualRule{After=%q}", e.BeforeOrEqual)
+	return fmt.Sprintf("must be a date before or equal to %s", e.BeforeOrEqual)
 }

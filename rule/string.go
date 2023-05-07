@@ -11,20 +11,22 @@ func String() *stringRule {
 }
 
 type stringRule struct {
+	Bailer
 }
 
-func (*stringRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
+func (r *stringRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
 	v, isNil := Dereference(value)
 	if isNil {
 		return (*string)(nil), nil
 	}
 
-	newValue, ok := v.(string)
-	if !ok {
+	if _, ok := v.(string); !ok {
+		r.MarkBailed()
+
 		return value, NewStringValidationError()
 	}
 
-	return newValue, nil
+	return value, nil
 }
 
 func NewStringValidationError() StringValidationError {
@@ -40,5 +42,5 @@ type StringValidationError struct {
 }
 
 func (StringValidationError) Error() string {
-	return "stringRule{}"
+	return "must be a string"
 }

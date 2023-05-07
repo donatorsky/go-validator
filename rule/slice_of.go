@@ -7,24 +7,31 @@ import (
 	ve "github.com/donatorsky/go-validator/error"
 )
 
-func SliceOf[T any]() *sliceOfRule[T] {
-	return &sliceOfRule[T]{}
+func SliceOf[Out any]() *sliceOfRule[Out] {
+	return &sliceOfRule[Out]{}
 }
 
-type sliceOfRule[T any] struct {
+type sliceOfRule[Out any] struct {
+	Bailer
 }
 
-func (*sliceOfRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
-	if value == nil {
-		return value, nil
+func (r *sliceOfRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
+	v, isNil := Dereference(value)
+	if isNil {
+		return ([]Out)(nil), nil
 	}
 
-	if newValue, ok := value.([]T); ok {
-		return newValue, nil
+	if _, ok := v.([]Out); !ok {
+		r.MarkBailed()
+
+		var el Out
+		return value, NewSliceOfValidationError(
+			fmt.Sprintf("%T", el),
+			fmt.Sprintf("%T", v),
+		)
 	}
 
-	var el T
-	return value, NewSliceOfValidationError(fmt.Sprintf("%T", el), fmt.Sprintf("%T", value))
+	return value, nil
 }
 
 func NewSliceOfValidationError(expected, actual string) SliceOfValidationError {
@@ -32,18 +39,18 @@ func NewSliceOfValidationError(expected, actual string) SliceOfValidationError {
 		BasicValidationError: ve.BasicValidationError{
 			Rule: ve.TypeSliceOf,
 		},
-		Expected: expected,
-		Actual:   actual,
+		ExpectedType: expected,
+		ActualType:   actual,
 	}
 }
 
 type SliceOfValidationError struct {
 	ve.BasicValidationError
 
-	Expected string `json:"expected"`
-	Actual   string `json:"actual"`
+	ExpectedType string `json:"expected_type"`
+	ActualType   string `json:"actual_type"`
 }
 
 func (e SliceOfValidationError) Error() string {
-	return fmt.Sprintf("sliceOfRule{Expected=%q, Actual=%q}", e.Expected, e.Actual)
+	return fmt.Sprintf("must be a slice of %q, but is %q", e.ExpectedType, e.ActualType)
 }

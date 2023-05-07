@@ -7,32 +7,30 @@ import (
 	ve "github.com/donatorsky/go-validator/error"
 )
 
-type integerType interface {
-	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
-}
-
 func Integer[Out integerType]() *integerRule[Out] {
 	return &integerRule[Out]{}
 }
 
 type integerRule[Out integerType] struct {
+	Bailer
 }
 
-func (integerRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
+func (r *integerRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
 	v, isNil := Dereference(value)
 	if isNil {
 		return (*Out)(nil), nil
 	}
 
-	newValue, ok := v.(Out)
-	if !ok {
+	if newValue, ok := v.(Out); !ok {
+		r.MarkBailed()
+
 		return value, NewIntegerValidationError(
 			fmt.Sprintf("%T", newValue),
 			fmt.Sprintf("%T", v),
 		)
 	}
 
-	return newValue, nil
+	return value, nil
 }
 
 func NewIntegerValidationError(expectedType, actualType string) IntegerValidationError {
@@ -54,7 +52,7 @@ type IntegerValidationError struct {
 
 func (e IntegerValidationError) Error() string {
 	return fmt.Sprintf(
-		"integerRule{ExpectedType=%q, ActualType=%q}",
+		"must be an %s but is %s",
 		e.ExpectedType,
 		e.ActualType,
 	)

@@ -13,26 +13,21 @@ func (e BasicValidationError) GetRule() string {
 	return e.Rule
 }
 
-type CompositeValidationError struct {
-	errors []ValidationError
+func NewCustomMessageValidationError(rule, message string) *CustomMessageValidationError {
+	return &CustomMessageValidationError{
+		BasicValidationError: BasicValidationError{
+			Rule: rule,
+		},
+		Message: message,
+	}
 }
 
-func (e CompositeValidationError) GetRule() string {
-	return ""
+type CustomMessageValidationError struct {
+	BasicValidationError
+
+	Message string `json:"message"`
 }
 
-func (e CompositeValidationError) Error() string {
-	return ""
-}
-
-func (e *CompositeValidationError) Add(error ValidationError) {
-	e.errors = append(e.errors, error)
-}
-
-func (e *CompositeValidationError) Errors() []ValidationError {
-	return e.errors
-}
-
-func (e *CompositeValidationError) Empty() bool {
-	return len(e.errors) == 0
+func (c CustomMessageValidationError) Error() string {
+	return c.Message
 }

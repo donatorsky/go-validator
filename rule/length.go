@@ -8,17 +8,17 @@ import (
 	ve "github.com/donatorsky/go-validator/error"
 )
 
-func Length[T number](length T) *lengthRule[T] {
+func Length[T integerType](length T) *lengthRule[T] {
 	return &lengthRule[T]{
 		length: length,
 	}
 }
 
-type lengthRule[T number] struct {
+type lengthRule[T integerType] struct {
 	length T
 }
 
-func (r lengthRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
+func (r *lengthRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
 	v, isNil := Dereference(value)
 	if isNil {
 		return value, nil
@@ -26,20 +26,25 @@ func (r lengthRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 
 	switch v := v.(type) {
 	case string:
-		if CompareNumbers(len(v), r.length) == 0 {
-			return value, NewLengthValidationError(ve.TypeLength, ve.SubtypeString, r.length)
+		if CompareNumbers(len(v), r.length) != 0 {
+			return value, NewLengthValidationError(ve.SubtypeString, r.length)
 		}
 
 	default:
 		switch valueOf := reflect.ValueOf(v); valueOf.Kind() {
-		case reflect.Slice, reflect.Array:
-			if CompareNumbers(valueOf.Len(), r.length) == 0 {
-				return value, NewLengthValidationError(ve.TypeLength, ve.SubtypeSlice, r.length)
+		case reflect.Slice:
+			if CompareNumbers(valueOf.Len(), r.length) != 0 {
+				return value, NewLengthValidationError(ve.SubtypeSlice, r.length)
+			}
+
+		case reflect.Array:
+			if CompareNumbers(valueOf.Len(), r.length) != 0 {
+				return value, NewLengthValidationError(ve.SubtypeArray, r.length)
 			}
 
 		case reflect.Map:
-			if CompareNumbers(valueOf.Len(), r.length) == 0 {
-				return value, NewLengthValidationError(ve.TypeLength, ve.SubtypeMap, r.length)
+			if CompareNumbers(valueOf.Len(), r.length) != 0 {
+				return value, NewLengthValidationError(ve.SubtypeMap, r.length)
 			}
 		}
 	}
@@ -47,21 +52,29 @@ func (r lengthRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 	return value, nil
 }
 
-func NewLengthValidationError[T number](t, st string, threshold T) LengthValidationError[T] {
+func NewLengthValidationError[T integerType](st string, threshold T) LengthValidationError[T] {
 	return LengthValidationError[T]{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: fmt.Sprintf("%s.%s", t, st),
+			Rule: fmt.Sprintf("%s.%s", ve.TypeLength, st),
 		},
 		Threshold: threshold,
 	}
 }
 
-type LengthValidationError[T number] struct {
+type LengthValidationError[T integerType] struct {
 	ve.BasicValidationError
 
 	Threshold T `json:"threshold"`
 }
 
 func (e LengthValidationError[T]) Error() string {
-	return fmt.Sprintf("lengthRule{Threshold=%v}", e.Threshold)
+	switch e.Rule {
+	case ve.TypeLength + "." + ve.SubtypeSlice,
+		ve.TypeLength + "." + ve.SubtypeArray,
+		ve.TypeLength + "." + ve.SubtypeMap:
+		return fmt.Sprintf("must have exactly %v items", e.Threshold)
+
+	default:
+		return fmt.Sprintf("must be exactly %v characters long", e.Threshold)
+	}
 }

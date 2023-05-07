@@ -12,18 +12,22 @@ func Slice() *sliceRule {
 }
 
 type sliceRule struct {
+	Bailer
 }
 
-func (*sliceRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
-	if value == nil {
+func (r *sliceRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
+	v, isNil := Dereference(value)
+	if isNil {
 		return value, nil
 	}
 
-	if kind := reflect.TypeOf(value); kind != nil && kind.Kind() == reflect.Slice {
-		return value, nil
+	if reflect.TypeOf(v).Kind() != reflect.Slice {
+		r.MarkBailed()
+
+		return value, NewSliceValidationError()
 	}
 
-	return value, NewSliceValidationError()
+	return value, nil
 }
 
 func NewSliceValidationError() SliceValidationError {
@@ -39,5 +43,5 @@ type SliceValidationError struct {
 }
 
 func (SliceValidationError) Error() string {
-	return "sliceRule{}"
+	return "must be a slice"
 }

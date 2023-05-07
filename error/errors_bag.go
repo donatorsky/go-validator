@@ -1,6 +1,9 @@
 package error
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 func NewErrorsBag() ErrorsBag {
 	return make(ErrorsBag)
@@ -42,7 +45,12 @@ func (b ErrorsBag) Error() string {
 	message := fmt.Sprintf("%d field(s) failed:", len(b))
 
 	for field, errors := range b {
-		message += fmt.Sprintf("\n%s: [%d]%s", field, len(errors), errors)
+		messages := make([]string, len(errors))
+		for idx, validationError := range errors {
+			messages[idx] = validationError.Error()
+		}
+
+		message += fmt.Sprintf("\n%s: [%d]%s", field, len(errors), strings.Join(messages, "; "))
 	}
 
 	return message

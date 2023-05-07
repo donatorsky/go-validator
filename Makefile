@@ -7,7 +7,7 @@ NEW ?= "new"
 
 # Runs benchmark
 bench:
-	@go test -run=^# -bench=. -count="${COUNT}" -benchtime="${BENCHTIME}" -timeout="${BENCHTIME}" | tee "${FILE}.bench.log"
+	@go test -run=^# -bench=. -count="${COUNT}" -benchtime="${BENCHTIME}" -timeout="${TIMEOUT}" ./... | tee "${FILE}.bench.log"
 
 # Benchmarks statistics
 bench-stats:

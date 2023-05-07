@@ -2,7 +2,6 @@ package rule
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	ve "github.com/donatorsky/go-validator/error"
@@ -23,7 +22,7 @@ type customRule[In any, Out any] struct {
 func (r customRule[In, Out]) Apply(ctx context.Context, value any, data any) (any, ve.ValidationError) {
 	inValue, ok := value.(In)
 	if !ok {
-		return value, NewCustomValidationError(errors.New("invalid data provided"))
+		return value, NewCustomValidationError(fmt.Errorf("invalid data type provided: %T, expected %T", value, inValue))
 	}
 
 	outValue, err := r.validator(ctx, inValue, data)
@@ -54,5 +53,5 @@ type CustomValidationError struct {
 }
 
 func (e CustomValidationError) Error() string {
-	return fmt.Sprintf("customRule{Err=%q}", e.Err)
+	return e.Err
 }

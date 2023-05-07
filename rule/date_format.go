@@ -57,5 +57,5 @@ type DateFormatValidationError struct {
 }
 
 func (e DateFormatValidationError) Error() string {
-	return fmt.Sprintf("dateFormatRule{Format=%q}", e.Format)
+	return fmt.Sprintf("does not match the date format %s", e.Format)
 }

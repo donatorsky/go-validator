@@ -46,5 +46,5 @@ type EmailValidationError struct {
 }
 
 func (e EmailValidationError) Error() string {
-	return "emailRule{}"
+	return "must be a valid email address"
 }

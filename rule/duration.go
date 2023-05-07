@@ -50,5 +50,5 @@ type DurationValidationError struct {
 }
 
 func (e DurationValidationError) Error() string {
-	return "durationRule{}"
+	return "must be a valid duration"
 }

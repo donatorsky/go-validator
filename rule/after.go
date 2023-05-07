@@ -23,12 +23,11 @@ type afterComparable interface {
 }
 
 func (r afterRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
-	comparableObj, ok := value.(afterComparable)
-	if !ok {
-		return value, NewAfterValidationError(r.after.Format(time.RFC3339Nano))
+	if _, isNil := Dereference(value); isNil {
+		return value, nil
 	}
 
-	if !comparableObj.After(r.after) {
+	if comparableObj, ok := value.(afterComparable); !ok || !comparableObj.After(r.after) {
 		return value, NewAfterValidationError(r.after.Format(time.RFC3339Nano))
 	}
 
@@ -51,5 +50,5 @@ type AfterValidationError struct {
 }
 
 func (e AfterValidationError) Error() string {
-	return fmt.Sprintf("afterRule{After=%q}", e.After)
+	return fmt.Sprintf("must be a date after %s", e.After)
 }

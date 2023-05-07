@@ -112,7 +112,7 @@ func Test_FieldsIterator_Mixed(t *testing.T) {
 	}
 }
 
-func Benchmark_FieldsIterator_InvalidValue(b *testing.B) {
+func BenchmarkFieldsIterator_InvalidValue(b *testing.B) {
 	for ttIdx, tt := range invalidValueTestCaseDataProvider() {
 		b.Run(fmt.Sprintf("#%d: %s on %s", ttIdx, tt.field, getType(tt.data)), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
@@ -126,7 +126,7 @@ func Benchmark_FieldsIterator_InvalidValue(b *testing.B) {
 	}
 }
 
-func Benchmark_FieldsIterator_Slice(b *testing.B) {
+func BenchmarkFieldsIterator_Slice(b *testing.B) {
 	for ttIdx, tt := range sliceTestCaseDataProvider() {
 		b.Run(fmt.Sprintf("#%d: %s on %s", ttIdx, tt.field, getType(tt.data)), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
@@ -140,7 +140,7 @@ func Benchmark_FieldsIterator_Slice(b *testing.B) {
 	}
 }
 
-func Benchmark_FieldsIterator_Array(b *testing.B) {
+func BenchmarkFieldsIterator_Array(b *testing.B) {
 	for ttIdx, tt := range arrayTestCaseDataProvider() {
 		b.Run(fmt.Sprintf("#%d: %s on %s", ttIdx, tt.field, getType(tt.data)), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
@@ -154,7 +154,7 @@ func Benchmark_FieldsIterator_Array(b *testing.B) {
 	}
 }
 
-func Benchmark_FieldsIterator_Map(b *testing.B) {
+func BenchmarkFieldsIterator_Map(b *testing.B) {
 	for ttIdx, tt := range mapTestCaseDataProvider() {
 		b.Run(fmt.Sprintf("#%d: %s on %s", ttIdx, tt.field, getType(tt.data)), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
@@ -168,7 +168,7 @@ func Benchmark_FieldsIterator_Map(b *testing.B) {
 	}
 }
 
-func Benchmark_FieldsIterator_Struct(b *testing.B) {
+func BenchmarkFieldsIterator_Struct(b *testing.B) {
 	for ttIdx, tt := range structTestCaseDataProvider() {
 		b.Run(fmt.Sprintf("#%d: %s on %s", ttIdx, tt.field, getType(tt.data)), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
@@ -182,7 +182,7 @@ func Benchmark_FieldsIterator_Struct(b *testing.B) {
 	}
 }
 
-func Benchmark_FieldsIterator_Mixed(b *testing.B) {
+func BenchmarkFieldsIterator_Mixed(b *testing.B) {
 	for ttIdx, tt := range mixedTestCaseDataProvider() {
 		b.Run(fmt.Sprintf("#%d: %s on %s", ttIdx, tt.field, getType(tt.data)), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
@@ -1440,6 +1440,8 @@ func getType(v any) string {
 		typeName := typeOf.Elem().String()
 		if typeName == "interface {}" {
 			typeName = "any"
+		} else {
+			typeName = strings.Replace(typeName, "validator.", "", 1)
 		}
 
 		return fmt.Sprintf(
@@ -1462,11 +1464,15 @@ func getType(v any) string {
 		keyName := typeOf.Key().String()
 		if keyName == "interface {}" {
 			keyName = "any"
+		} else {
+			keyName = strings.Replace(keyName, "validator.", "", 1)
 		}
 
 		typeName := typeOf.Elem().String()
 		if typeName == "interface {}" {
 			typeName = "any"
+		} else {
+			typeName = strings.Replace(typeName, "validator.", "", 1)
 		}
 
 		return fmt.Sprintf(
@@ -1477,7 +1483,7 @@ func getType(v any) string {
 		)
 
 	default:
-		return typeOf.String()
+		return strings.Replace(typeOf.String(), "validator.", "", 1)
 	}
 }
 

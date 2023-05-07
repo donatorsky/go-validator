@@ -2,7 +2,6 @@ package rule
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	ve "github.com/donatorsky/go-validator/error"
@@ -13,56 +12,156 @@ func Boolean() *booleanRule {
 }
 
 type booleanRule struct {
+	Bailer
 }
 
-func (*booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
-	switch newValue := value.(type) {
+func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
+	v, isNil := Dereference(value)
+	if isNil {
+		return (*bool)(nil), nil
+	}
+
+	switch newValue := v.(type) {
 	case bool:
-		return newValue, nil
-
-	case string:
-		value, err := strconv.ParseBool(newValue)
-		if err != nil {
-			return newValue, NewBooleanValidationError(fmt.Sprintf("%T", value))
-		}
-
 		return value, nil
 
-	case int, int8, int16, int32, int64,
-		uint, uint8, uint16, uint32, uint64:
+	case string:
+		parsedValue, err := strconv.ParseBool(newValue)
+		if err != nil {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return parsedValue, nil
+
+	case int:
 		if newValue != 0 && newValue != 1 {
-			return value, NewBooleanValidationError(fmt.Sprintf("%T", value))
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
 
-	case float32, float64:
+	case int8:
+		if newValue != 0 && newValue != 1 {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return newValue == 1, nil
+
+	case int16:
+		if newValue != 0 && newValue != 1 {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return newValue == 1, nil
+
+	case int32:
+		if newValue != 0 && newValue != 1 {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return newValue == 1, nil
+
+	case int64:
+		if newValue != 0 && newValue != 1 {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return newValue == 1, nil
+
+	case uint:
+		if newValue != 0 && newValue != 1 {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return newValue == 1, nil
+
+	case uint8:
+		if newValue != 0 && newValue != 1 {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return newValue == 1, nil
+
+	case uint16:
+		if newValue != 0 && newValue != 1 {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return newValue == 1, nil
+
+	case uint32:
+		if newValue != 0 && newValue != 1 {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return newValue == 1, nil
+
+	case uint64:
+		if newValue != 0 && newValue != 1 {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return newValue == 1, nil
+
+	case float32:
 		if newValue != 0.0 && newValue != 1.0 {
-			return value, NewBooleanValidationError(fmt.Sprintf("%T", value))
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
+		}
+
+		return newValue == 1.0, nil
+
+	case float64:
+		if newValue != 0.0 && newValue != 1.0 {
+			r.MarkBailed()
+
+			return value, NewBooleanValidationError()
 		}
 
 		return newValue == 1.0, nil
 
 	default:
-		return value, NewBooleanValidationError(fmt.Sprintf("%T", value))
+		r.MarkBailed()
+
+		return value, NewBooleanValidationError()
 	}
 }
 
-func NewBooleanValidationError(actual string) BooleanValidationError {
+func NewBooleanValidationError() BooleanValidationError {
 	return BooleanValidationError{
 		BasicValidationError: ve.BasicValidationError{
 			Rule: ve.TypeBoolean,
 		},
-		Actual: actual,
 	}
 }
 
 type BooleanValidationError struct {
 	ve.BasicValidationError
-
-	Actual string `json:"actual"`
 }
 
 func (e BooleanValidationError) Error() string {
-	return fmt.Sprintf("booleanRule{Actual=%q}", e.Actual)
+	return "must be true or false"
 }

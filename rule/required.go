@@ -21,6 +21,12 @@ func (r *requiredRule) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 		return nil, NewRequiredValidationError()
 	}
 
+	if _, isNil := Dereference(value); isNil {
+		r.MarkBailed()
+
+		return nil, NewRequiredValidationError()
+	}
+
 	return value, nil
 }
 
@@ -37,5 +43,5 @@ type RequiredValidationError struct {
 }
 
 func (RequiredValidationError) Error() string {
-	return "requiredRule{}"
+	return "is required"
 }

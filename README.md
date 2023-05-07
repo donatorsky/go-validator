@@ -491,14 +491,24 @@ validator.ForValue(
     validator.RulesMap{
         rule.Required(),
         rule.Integer[int](),
-        rule.WhenFunc[int](
-            func(ctx context.Context, value int, data any) bool {
-                return value%2 == 1
+        rule.WhenFunc(
+            func(ctx context.Context, value any, data any) bool {
+                value, isNil := rule.Dereference(value)
+				if isNil {
+					return false
+                }
+				
+                return value.(int)%2 == 1
             },
             rule.Min(100),
-            rule.WhenFunc[int](
-                func(_ context.Context, value int, _ any) bool {
-                    return value%2 == 0
+            rule.WhenFunc(
+                func(_ context.Context, value any, _ any) bool {
+                    value, isNil := rule.Dereference(value)
+                    if isNil {
+                        return false
+                    }
+                    
+                    return value.(int)%2 == 0
                 },
                 rule.Min(200),
                 // ...
@@ -529,7 +539,494 @@ validator.ForValue(
 
 ## Available rules
 
-TODO (see [rules](rule) directory).
+Common types:
+
+- `integerType` - Any integer type, i.e.: `~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64`.
+- `floatType` - Any integer type, i.e.: `~float32 | ~float64`.
+- `numberType` - Any number, i.e.: `integerType | floatType`.
+- `afterComparable` - Any object that implements the following interface:
+```go
+type afterComparable interface {
+	After(time.Time) bool
+}
+```
+- `afterOrEqualComparable` - Any object that implements the following interface:
+```go
+type afterOrEqualComparable interface {
+    Equal(time.Time) bool
+    After(time.Time) bool
+}
+```
+- `beforeComparable` - Any object that implements the following interface:
+```go
+type beforeComparable interface {
+	Before(time.Time) bool
+}
+```
+- `beforeOrEqualComparable` - Any object that implements the following interface:
+```go
+type beforeOrEqualComparable interface {
+    Equal(time.Time) bool
+    Before(time.Time) bool
+}
+```
+- `Comparator` - Any object of the following type:
+```go
+type Comparator func(x, y any) bool
+```
+
+### `After(after time.Time)`
+
+Checks whether a value is after `after` date.
+
+**Applies to:**
+
+Any value. Passes only when a value implements `afterComparable` interface and is after `after` date.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `AfterOrEqual(afterOrEqual time.Time)`
+
+Checks whether a value is after or equal to `afterOrEqual` date.
+
+**Applies to:**
+
+Any value. Passes only when a value implements `afterOrEqualComparable` interface and is after or equal to `afterOrEqual` date.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Array()`
+
+Checks and ensures that a value is of array type.
+
+**Applies to:**
+
+Any value. Passes only when a value is of array type or its pointer, any length and element type.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+Yes, when a value is not of array type.
+
+### `ArrayOf[Out any]()`
+
+Checks and ensures that a value is of `[n]Out` type.
+
+**Applies to:**
+
+Any value. Passes only when a value is of `[n]Out` type or its pointer, any length, or `nil` array of any type.
+
+**Modifies output:**
+
+Yes. Returns `nil` slice of `[0]Out` type for `nil` values. Returns input value otherwise.
+
+**Bails:**
+
+Yes, when a value is not of `[n]Out` type or its pointer.
+
+### `Before(before time.Time)`
+
+Checks whether a value is before `before` date.
+
+**Applies to:**
+
+Any value. Passes only when a value implements `beforeComparable` interface and is before `before` date.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `BeforeOrEqual(beforeOrEqual time.Time)`
+
+Checks whether a value is before or equal to `beforeOrEqual` date.
+
+**Applies to:**
+
+Any value. Passes only when a value implements `beforeOrEqualComparable` interface and is before or equal to `beforeOrEqual` date.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Between[T numberType](min, max T)`
+
+Checks whether a value is between `min` and `max`, inclusive.
+
+**Applies to:**
+
+- `numberType`: checks if a value is between `min` and `max`.
+- `string`: checks if string's length is between `min` and `max`.
+- `slice`, `array`: checks if slice/array has at least `min` and `max` elements.
+- `map`: checks if map has at least `min` and `max` keys.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `BetweenExclusive[T numberType](min, max T)`
+
+Checks whether a value is between `min` and `max`, exclusive.
+
+**Applies to:**
+
+- `numberType`: checks if a value is between `min` and `max`.
+- `string`: checks if string's length is between `min` and `max`.
+- `slice`, `array`: checks if slice/array has at least `min` and `max` elements.
+- `map`: checks if map has at least `min` and `max` keys.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Boolean()`
+
+Checks and ensures that a value is of `bool` type.
+
+**Applies to:**
+
+- `bool`: any value.
+- `integerType`: when a value equals to `0` or `1`.
+- `floatType`: when a value equals to `0.0` or `1.0`.
+- `string`: when string is convertible to `bool` according to the `strconv.ParseBool` function.
+
+**Modifies output:**
+
+- `nil`: returns `*bool` nil pinter.
+- `bool`: returns unchanged value.
+- `integerType`: `false` when `0`, `true` when `1`.
+- `floatType`: `false` when `0.0`, `true` when `1.0`.
+- `string`: according to the `strconv.ParseBool` function.
+
+**Bails:**
+
+Yes, when a value is not of `bool` type, its pointer or cannot be converted to it.
+
+### `Date()`
+
+Checks whether a value is of `time.Time` type, its pointer or valid date string in `time.RFC3339Nano` format.
+
+**Applies to:**
+
+- `nil`.
+- `time.Duration`: any value.
+- `string`: when string is convertible to `time.Duration` according to the `time.Parse` function and `time.RFC3339Nano` format.
+
+**Modifies output:**
+
+- `nil`: returns `*time.Time` nil pinter.
+- `time.Time`: returns unchanged value.
+- `string`: according to the `time.Parse` function.
+
+**Bails:**
+
+No.
+
+### `DateFormat(format string)`
+
+Checks whether a value is of `time.Time` type, its pointer or valid date string in `format` format.
+
+**Applies to:**
+
+- `nil`.
+- `time.Duration`: any value.
+- `string`: when string is convertible to `time.Duration` according to the `time.Parse` function and `format` format.
+
+**Modifies output:**
+
+- `nil`: returns `*time.Time` nil pinter.
+- `time.Time`: returns unchanged value.
+- `string`: according to the `time.Parse` function.
+
+**Bails:**
+
+No.
+
+### `Duration()`
+
+Checks whether a value is of `time.Duration` type, its pointer or valid duration string.
+
+**Applies to:**
+
+- `time.Duration`: any value.
+- `string`: when string is convertible to `time.Duration` according to the `time.ParseDuration` function.
+
+**Modifies output:**
+
+- `nil`: returns `*time.Duration` nil pinter.
+- `time.Duration`: returns unchanged value.
+- `string`: according to the `time.ParseDuration` function.
+
+**Bails:**
+
+No.
+
+### `Email()`
+
+Checks whether a value is valid email address, according to the `net/mail.ParseAddress` function.
+
+**Applies to:**
+
+Any value. Passes only when a value is of `string` type or its pointer and was successfully parsed by `net/mail.ParseAddress` function.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `EmailAddress()`
+
+Checks whether a value is valid email address, according to the `net/mail.ParseAddress` function.
+
+**Applies to:**
+
+Any value. Passes only when a value is of `string` type or its pointer and was successfully parsed by `net/mail.ParseAddress` function.
+
+**Modifies output:**
+
+Yes. Unlike the `Email()` rule, it returns the email address of the string. E.g. given a value `Foo Bar <foo@bar.baz> (some comment)`, the output will be `foo@bar.baz`.
+
+**Bails:**
+
+No.
+
+### `Float[Out floatType]()`
+
+Checks and ensures that a value is of `Out` type or its pointer.
+
+**Applies to:**
+
+Any value. Passes only when a value is of `Out` type or its pointer.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+Yes, when a value is not of `Out` type or its pointer.
+
+### `In[T comparable](values []T, options ...inRuleOption)`
+
+Checks whether a value exists in `values`.
+
+**Options:**
+
+- `InRuleWithComparator(comparator Comparator)`: sets custom elements comparator. `comparator` receives an input value and each element of `values`, one at a time.
+- `InRuleWithoutAutoDereference()`: disables automatic dereference of a value, i.e. `values` will be compared against the exact input value which may be a pointer.
+
+**Applies to:**
+
+Any value. Passes only when a value exists in `values`, optionally using custom `comparator`.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Integer[Out integerType]()`
+
+Checks and ensures that a value is of `Out` type or its pointer.
+
+**Applies to:**
+
+Any value. Passes only when a value is of `Out` type or its pointer.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+Yes, when a value is not of `Out` type or its pointer.
+
+### `Length[T integerType](length T)`
+
+Checks whether a value is exactly `length`.
+
+**Applies to:**
+
+- `string`: checks if string's length is exactly `length` characters.
+- `slice`, `array`: checks if slice/array has exactly `length` elements.
+- `map`: checks if map has exactly `length` keys.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Map()`
+
+Checks and ensures that a value is of map type.
+
+**Applies to:**
+
+Any value. Passes only when a value is of map type or its pointer, any length and key/value type.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+Yes, when a value is not of map type.
+
+### `Max[T numberType](max T)`
+
+Checks whether a value is at most `max`.
+
+**Applies to:**
+
+- `numberType`: checks if a value is at most `max` .
+- `string`: checks if string's length is at most `max` characters.
+- `slice`, `array`: checks if slice/array has at most `max` elements.
+- `map`: checks if map has at most `max` keys.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Min[T numberType](min T)`
+
+Checks whether a value is at least `min`.
+
+**Applies to:**
+
+- `numberType`: checks if a value is at least `min`.
+- `string`: checks if string's length is at least `min` characters.
+- `slice`, `array`: checks if slice/array has at least `min` elements.
+- `map`: checks if map has at least `min` keys.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Required()`
+
+Checks whether a value is not nil.
+
+**Applies to:**
+
+Any value.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+Yes. When value is nil.
+
+### `Slice()`
+
+Checks and ensures that a value is of slice type.
+
+**Applies to:**
+
+Any value. Passes only when a value is of slice type or its pointer, any length and element type.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+Yes, when a value is not of slice type or its pointer.
+
+### `SliceOf[Out any]()`
+
+Checks and ensures that a value is of `[]Out` type.
+
+**Applies to:**
+
+Any value. Passes only when a value is of `[]Out` type or its pointer, any length, or `nil` slice of any type.
+
+**Modifies output:**
+
+Yes. Returns `nil` slice of `[]Out` type for `nil` values. Returns input value otherwise.
+
+**Bails:**
+
+Yes, when a value is not of `[]Out` type or its pointer.
+
+### `String()`
+
+Checks and ensures that a value is of `string` type or its pointer.
+
+**Applies to:**
+
+Any value. Passes only when a value is of `string` type or its pointer.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+Yes, when a value is not of `string` type or its pointer.
+
+### `Struct()`
+
+Checks and ensures that a value is of struct type.
+
+**Applies to:**
+
+Any value. Passes only when a value is of struct type or its pointer, any type.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+Yes, when a value is not of struct type.
 
 ## Custom validation
 
@@ -574,7 +1071,7 @@ func (r DividesByN) Apply(_ context.Context, value any, _ any) (any, ve.Validati
             Divider: r.divider,
         }
     }
-    
+
     return value, nil
 }
 
@@ -599,296 +1096,69 @@ validator.ForValue(
 )
 ```
 
-## Example
+## JSON formatting
+
+Both `error.ValidationError` and `error.ErrorsBag` support JSON marshalling giving your application a handy way of reporting errors that occured.
 
 ```go
 package main
 
 import (
-    "context"
-    "errors"
     "encoding/json"
     "fmt"
-    "time"
+    "os"
 
     "github.com/donatorsky/go-validator"
     "github.com/donatorsky/go-validator/rule"
 )
 
 func main() {
-	var (
-		mapData = map[string]any{
-			"int":         int(125),
-			"*int":        ptr(int(124)),
-			"**int":       ptr(ptr(int(124))),
-			"string":      "Lorem ipsum",
-			"boolean":     true,
-			"skip":        "123",
-			"date_string": "2023-03-31",
-			"array":       []any{"Foo", nil, "Bar", "Baz", 123},
-			"child": map[string]any{
-				"id": 123,
-				"ancestor": map[string]int{
-					"id": 456,
-				},
-			},
-			"children": []map[string]any{
-				{"id": 123},
-				{"id": 456},
-				{"id": 789},
-			},
-			"object": data{
-				ID:      -1,
-				Name:    "value: Name",
-				Enabled: true,
-				Skip:    "value: Skip",
-				NoName:  "value: NoName",
-			},
-		}
-
-		intRules = []rule.Rule{
-			rule.When(true,
-				rule.When(true,
-					rule.Min(101),
-					//rule.Bail(),
-				),
-				rule.Min(150),
-				//rule.Bail(),
-			),
-			rule.Required(),
-			rule.Integer[int](),
-			//rule.Bail(),
-			rule.Min(1240),
-			rule.Min(float32(125.01)),
-			rule.Min(float64(125.01)),
-			rule.When(true,
-				rule.Min(102),
-				//rule.Bail(),
-				rule.When(true,
-					rule.Min(103),
-					//rule.Bail(),
-				),
-			),
-			rule.WhenFunc(
-				func(_ context.Context, value int, _ any) bool {
-					time.Sleep(time.Millisecond * 100)
-
-					return value%2 == 0
-				},
-				rule.Min(200),
-				//rule.Bail(),
-				rule.When(true,
-					rule.When(true,
-						rule.Min(300),
-						//rule.Bail(),
-					),
-					rule.Max(90),
-					//rule.Bail(),
-				),
-				rule.Max(100),
-			),
-			rule.Min(400),
-			rule.Custom(func(_ context.Context, value int, _ any) (int, error) {
-				switch value % 3 {
-				case 0:
-					return value + 1, nil
-
-				case 1:
-					return value - 1, nil
-
-				default:
-					return value, errors.New("nie dzielimy przez 3")
-				}
-			}),
-		}
-
-		allRules = validator.RulesMap{
-			"int":   intRules,
-			"*int":  intRules,
-			"**int": intRules,
-
-			"child.id": {
-				rule.Required(),
-				rule.Integer[int](),
-				rule.Float[float32](),
-				//rule.Min(150),
-			},
-
-			"child.ancestor.id": {
-				rule.Required(),
-				rule.Integer[int](),
-				rule.Min(500),
-			},
-
-			"array.*": {
-				rule.Required(),
-				rule.String(),
-				rule.In([]string{"Foo", "foo"}),
-			},
-		}
-	)
-
-    fmt.Println("ForMapWithContext")
-    forMapErrorsBag := validator.ForMapWithContext(context.Background(), mapData, allRules)
-    fmt.Println(forMapErrorsBag, "\n", toJSON(forMapErrorsBag))
-
-    fmt.Println("\nForStructWithContext")
-    forStructErrorsBag := validator.ForStructWithContext(context.Background(), ptr(data{}), allRules)
-    fmt.Println(forStructErrorsBag, "\n", toJSON(forStructErrorsBag))
-
-    fmt.Println("\nForSliceWithContext")
-    forSliceErrorsBag := validator.ForSliceWithContext(context.Background(), ptr([]int{1, 2, 3}),
-        rule.Min(150),
-    )
-    fmt.Println(forSliceErrorsBag, "\n", toJSON(forSliceErrorsBag))
-
-    fmt.Println("\nForValueWithContext (simple)")
-    forValueErrors := validator.ForValueWithContext(context.Background(), ptr(ptr(6)),
-        rule.Required(),
-        rule.Min(150),
-    )
-    fmt.Println(forValueErrors, "\n", toJSON(forValueErrors))
+    errorsBag := validator.ForMap(map[string]any{...}, validator.RulesMap{...})
+    fmt.Println(errorsBag)
+    fmt.Println()
+    printJSON(errorsBag)
 }
 
-type data struct {
-    ID      int    `json:"id" validation:"id"`
-    Name    string `json:"name" validation:"name"`
-    Enabled bool   `json:"enabled" validation:"enabled"`
-    Skip    string `json:"-" validation:"-"`
-    NoName  string `json:"-"`
-}
-
-func ptr[T any](v T) *T {
-	return &v
-}
-
-func toJSON(data any) string {
-    var buf bytes.Buffer
-    encoder := json.NewEncoder(&buf)
+func printJSON(data any) {
+    encoder := json.NewEncoder(os.Stdout)
     encoder.SetIndent("", "  ")
 
     _ = encoder.Encode(data)
-
-    return buf.String()
 }
 ```
 
-Produces:
+Produces something similar to:
 
 ```text
-ForMapWithContext
-8 field(s) failed:
-int: [6][minRule{Threshold=150} minRule{Threshold=1240} minRule{Threshold=125.01} minRule{Threshold=125.01} minRule{Threshold=400} customRule{Err="nie dzielimy przez 3"}]
-*int: [9][minRule{Threshold=150} minRule{Threshold=1240} minRule{Threshold=125.01} minRule{Threshold=125.01} minRule{Threshold=200} minRule{Threshold=300} maxRule{Threshold=90} maxRule{Threshold=100} minRule{Threshold=400}]
-**int: [9][minRule{Threshold=150} minRule{Threshold=1240} minRule{Threshold=125.01} minRule{Threshold=125.01} minRule{Threshold=200} minRule{Threshold=300} maxRule{Threshold=90} maxRule{Threshold=100} minRule{Threshold=400}]
-child.id: [2][floatRule{ExpectedType="float32", ActualType="int"} minRule{Threshold=500}]
-array.1: [1][requiredRule{}]
-array.2: [1][inRule{Values=[Foo foo]}]
-array.3: [1][inRule{Values=[Foo foo]}]
-array.4: [2][stringRule{} inRule{Values=[Foo foo]}] 
- {
-  "**int": [
+4 field(s) failed:
+int: [1][must be at least 150]
+child.id: [1][must be an int but is float64]
+child.roles.*: [1][is required]
+array.4: [2][must end with "oo"; does not exist in [Foo foo]}]
+
+{
+  "int": [
     {
-      "rule": "MIN.NUMBER",
+      "rule": "MIN.NUMBER"
       "threshold": 150
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 1240
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 125.01
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 125.01
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 200
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 300
-    },
-    {
-      "rule": "MAX.NUMBER",
-      "threshold": 90
-    },
-    {
-      "rule": "MAX.NUMBER",
-      "threshold": 100
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 400
     }
   ],
-  "*int": [
+  "child.id": [
     {
-      "rule": "MIN.NUMBER",
-      "threshold": 150
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 1240
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 125.01
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 125.01
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 200
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 300
-    },
-    {
-      "rule": "MAX.NUMBER",
-      "threshold": 90
-    },
-    {
-      "rule": "MAX.NUMBER",
-      "threshold": 100
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 400
+      "rule": "INT"
+      "expected_type": "int"
+      "actual_type": "float64"
     }
   ],
-  "array.1": [
+  "child.roles.*": [
     {
       "rule": "REQUIRED"
-    }
-  ],
-  "array.2": [
-    {
-      "rule": "IN",
-      "values": [
-        "Foo",
-        "foo"
-      ]
-    }
-  ],
-  "array.3": [
-    {
-      "rule": "IN",
-      "values": [
-        "Foo",
-        "foo"
-      ]
     }
   ],
   "array.4": [
     {
-      "rule": "STRING"
+      "rule": "ENDS_WITH"
+      "end_part": "oo"
     },
     {
       "rule": "IN",
@@ -898,118 +1168,5 @@ array.4: [2][stringRule{} inRule{Values=[Foo foo]}]
       ]
     }
   ],
-  "child.id": [
-    {
-      "rule": "INT",
-      "expected_type": "float32",
-      "actual_type": "int"
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 500
-    }
-  ],
-  "int": [
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 150
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 1240
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 125.01
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 125.01
-    },
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 400
-    },
-    {
-      "rule": "CUSTOM",
-      "error": "nie dzielimy przez 3"
-    }
-  ]
 }
-
-
-ForStructWithContext
-5 field(s) failed:
-int: [1][requiredRule{}]
-*int: [1][requiredRule{}]
-**int: [1][requiredRule{}]
-child.id: [2][requiredRule{} requiredRule{}]
-array.*: [1][requiredRule{}] 
- {
-  "**int": [
-    {
-      "rule": "REQUIRED"
-    }
-  ],
-  "*int": [
-    {
-      "rule": "REQUIRED"
-    }
-  ],
-  "array.*": [
-    {
-      "rule": "REQUIRED"
-    }
-  ],
-  "child.id": [
-    {
-      "rule": "REQUIRED"
-    },
-    {
-      "rule": "REQUIRED"
-    }
-  ],
-  "int": [
-    {
-      "rule": "REQUIRED"
-    }
-  ]
-}
-
-
-ForSliceWithContext
-3 field(s) failed:
-0: [1][minRule{Threshold=150}]
-1: [1][minRule{Threshold=150}]
-2: [1][minRule{Threshold=150}] 
- {
-  "0": [
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 150
-    }
-  ],
-  "1": [
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 150
-    }
-  ],
-  "2": [
-    {
-      "rule": "MIN.NUMBER",
-      "threshold": 150
-    }
-  ]
-}
-
-
-ForValueWithContext (simple)
-[minRule{Threshold=150}] 
- [
-  {
-    "rule": "MIN.NUMBER",
-    "threshold": 150
-  }
-]
 ```

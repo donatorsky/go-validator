@@ -8,6 +8,18 @@ import (
 	ve "github.com/donatorsky/go-validator/error"
 )
 
+type integerType interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
+}
+
+type floatType interface {
+	~float32 | ~float64
+}
+
+type numberType interface {
+	integerType | floatType
+}
+
 type Rule interface {
 	Apply(ctx context.Context, value any, data any) (newValue any, err ve.ValidationError)
 }
@@ -59,17 +71,11 @@ func Dereference(reference any) (value any, isNil bool) {
 	return reference, false
 }
 
-type number interface {
-	~int | ~int8 | ~int16 | ~int32 | ~int64 |
-		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
-		~float32 | ~float64
-}
-
-func CompareNumbers[N1, N2 number](n1 N1, n2 N2) int {
+func CompareNumbers[N1, N2 numberType](n1 N1, n2 N2) int {
 	return toBigFloat(n1).Cmp(toBigFloat(n2))
 }
 
-func toBigFloat[T number](n T) *big.Float {
+func toBigFloat[T numberType](n T) *big.Float {
 	v := &big.Float{}
 
 	switch valueOf := reflect.ValueOf(n); {

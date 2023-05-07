@@ -3,34 +3,73 @@ package rule
 import (
 	"context"
 	"fmt"
-	"reflect"
 
 	ve "github.com/donatorsky/go-validator/error"
 )
 
-func In[T any](values []T) *inRule[T] {
-	return &inRule[T]{
-		values: values,
+type inRuleOption func(rule *inRuleOptions)
+
+type Comparator func(value, expectedValue any) bool
+
+func In[T comparable](values []T, options ...inRuleOption) *inRule[T] {
+	opts := &inRuleOptions{
+		comparator:      nil,
+		autoDereference: true,
 	}
+
+	for _, option := range options {
+		option(opts)
+	}
+
+	r := inRule[T]{
+		values:          values,
+		valuesMap:       nil,
+		comparator:      opts.comparator,
+		autoDereference: opts.autoDereference,
+	}
+
+	if opts.comparator == nil {
+		r.valuesMap = map[T]any{}
+
+		for _, value := range values {
+			r.valuesMap[value] = nil
+		}
+	}
+
+	return &r
 }
 
-type inRule[T any] struct {
-	values []T
+type inRule[T comparable] struct {
+	values             []T
+	valuesMap          map[T]any
+	comparator         Comparator
+	autoDereference    bool
+	customErrorMessage *string
 }
 
 func (r *inRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
-	if value == nil {
-		return value, nil
+	var newValue any
+	if r.autoDereference {
+		newValue, _ = Dereference(value)
+	} else {
+		newValue = value
 	}
 
-	newValue, ok := value.(T)
-	if !ok {
-		return value, NewInValidationError(r.values)
-	}
+	if r.comparator == nil {
+		newValue, ok := newValue.(T)
+		if !ok {
+			return value, NewInValidationError(r.values)
+		}
 
-	for _, v := range r.values {
-		if reflect.DeepEqual(v, newValue) {
+		_, exists := r.valuesMap[newValue]
+		if exists {
 			return value, nil
+		}
+	} else {
+		for _, v := range r.values {
+			if r.comparator(newValue, v) {
+				return value, nil
+			}
 		}
 	}
 
@@ -53,5 +92,22 @@ type InValidationError[T any] struct {
 }
 
 func (e InValidationError[T]) Error() string {
-	return fmt.Sprintf("inRule{Values=%v}", e.Values)
+	return fmt.Sprintf("does not exist in %v", e.Values)
+}
+
+type inRuleOptions struct {
+	comparator      Comparator
+	autoDereference bool
+}
+
+func InRuleWithComparator(comparator Comparator) inRuleOption {
+	return func(rule *inRuleOptions) {
+		rule.comparator = comparator
+	}
+}
+
+func InRuleWithoutAutoDereference() inRuleOption {
+	return func(rule *inRuleOptions) {
+		rule.autoDereference = false
+	}
 }
