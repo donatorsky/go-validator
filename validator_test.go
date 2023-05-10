@@ -42,7 +42,7 @@ func TestForMap(t *testing.T) {
 	)
 
 	// when
-	errorsBag := ForMap(data, mergeMaps(
+	errorsBag, err := ForMap(data, mergeMaps(
 		RulesMap{
 			"value": valueRuleMocks,
 			"slice": sliceRuleMocks,
@@ -67,6 +67,7 @@ func TestForMap(t *testing.T) {
 	))
 
 	// then
+	require.NoError(t, err)
 	require.Len(t, errorsBag, 10)
 
 	// "value" assertions
@@ -116,7 +117,7 @@ func TestForMapWithContext(t *testing.T) {
 	)
 
 	// when
-	errorsBag := ForMapWithContext(ctx, data, mergeMaps(
+	errorsBag, err := ForMapWithContext(ctx, data, mergeMaps(
 		RulesMap{
 			"value": valueRuleMocks,
 			"slice": sliceRuleMocks,
@@ -141,6 +142,7 @@ func TestForMapWithContext(t *testing.T) {
 	))
 
 	// then
+	require.NoError(t, err)
 	require.Len(t, errorsBag, 10)
 
 	// "value" assertions
@@ -195,7 +197,7 @@ func TestForStruct(t *testing.T) {
 	)
 
 	// when
-	errorsBag := ForStruct(data, mergeMaps(
+	errorsBag, err := ForStruct(data, mergeMaps(
 		RulesMap{
 			"value": valueRuleMocks,
 			"slice": sliceRuleMocks,
@@ -220,6 +222,7 @@ func TestForStruct(t *testing.T) {
 	))
 
 	// then
+	require.NoError(t, err)
 	require.Len(t, errorsBag, 10)
 
 	// "value" assertions
@@ -245,6 +248,14 @@ func TestForStruct(t *testing.T) {
 
 	// "slice.foo" assertions
 	require.True(t, assertErrorsBagContainsErrorsForField(t, errorsBag, []ve.ValidationError{vr.NewRequiredValidationError()}, "slice.foo"))
+}
+
+func TestForStruct_FailsWhenInvalidDataProvided(t *testing.T) {
+	// when
+	_, err := ForStruct(1, nil)
+
+	// then
+	require.ErrorIs(t, err, ErrNotStructType)
 }
 
 func TestForStructWithContext(t *testing.T) {
@@ -269,7 +280,7 @@ func TestForStructWithContext(t *testing.T) {
 	)
 
 	// when
-	errorsBag := ForStructWithContext(ctx, data, mergeMaps(
+	errorsBag, err := ForStructWithContext(ctx, data, mergeMaps(
 		RulesMap{
 			"value": valueRuleMocks,
 			"slice": sliceRuleMocks,
@@ -294,6 +305,7 @@ func TestForStructWithContext(t *testing.T) {
 	))
 
 	// then
+	require.NoError(t, err)
 	require.Len(t, errorsBag, 10)
 
 	// "value" assertions
@@ -321,6 +333,14 @@ func TestForStructWithContext(t *testing.T) {
 	require.True(t, assertErrorsBagContainsErrorsForField(t, errorsBag, []ve.ValidationError{vr.NewRequiredValidationError()}, "slice.foo"))
 }
 
+func TestForStructWithContext_FailsWhenInvalidDataProvided(t *testing.T) {
+	// when
+	_, err := ForStructWithContext(context.TODO(), 1, nil)
+
+	// then
+	require.ErrorIs(t, err, ErrNotStructType)
+}
+
 func TestForSlice(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -338,13 +358,22 @@ func TestForSlice(t *testing.T) {
 	)
 
 	// when
-	validationErrors := ForSlice(data, valueRuleMocks["_.*"]...)
+	validationErrors, err := ForSlice(data, valueRuleMocks["_.*"]...)
 
 	// then
+	require.NoError(t, err)
 	require.Len(t, validationErrors, 3)
 	require.True(t, assertErrorsBagContainsErrorsForField(t, sliceElementsValidationErrorsBag, validationErrors["0"], "_.0"))
 	require.True(t, assertErrorsBagContainsErrorsForField(t, sliceElementsValidationErrorsBag, validationErrors["1"], "_.1"))
 	require.True(t, assertErrorsBagContainsErrorsForField(t, sliceElementsValidationErrorsBag, validationErrors["2"], "_.2"))
+}
+
+func TestForSlice_FailsWhenInvalidDataProvided(t *testing.T) {
+	// when
+	_, err := ForSlice(1)
+
+	// then
+	require.ErrorIs(t, err, ErrNotListType)
 }
 
 func TestForSliceWithContext(t *testing.T) {
@@ -364,13 +393,22 @@ func TestForSliceWithContext(t *testing.T) {
 	)
 
 	// when
-	validationErrors := ForSliceWithContext(ctx, data, valueRuleMocks["_.*"]...)
+	validationErrors, err := ForSliceWithContext(ctx, data, valueRuleMocks["_.*"]...)
 
 	// then
+	require.NoError(t, err)
 	require.Len(t, validationErrors, 3)
 	require.True(t, assertErrorsBagContainsErrorsForField(t, sliceElementsValidationErrorsBag, validationErrors["0"], "_.0"))
 	require.True(t, assertErrorsBagContainsErrorsForField(t, sliceElementsValidationErrorsBag, validationErrors["1"], "_.1"))
 	require.True(t, assertErrorsBagContainsErrorsForField(t, sliceElementsValidationErrorsBag, validationErrors["2"], "_.2"))
+}
+
+func TestForSliceWithContext_FailsWhenInvalidDataProvided(t *testing.T) {
+	// when
+	_, err := ForSliceWithContext(context.TODO(), 1)
+
+	// then
+	require.ErrorIs(t, err, ErrNotListType)
 }
 
 func TestForValue(t *testing.T) {
@@ -386,9 +424,10 @@ func TestForValue(t *testing.T) {
 	)
 
 	// when
-	validationErrors := ForValue(data, valueRuleMocks...)
+	validationErrors, err := ForValue(data, valueRuleMocks...)
 
 	// then
+	require.NoError(t, err)
 	require.Len(t, validationErrors, 2)
 	require.Equal(t, valueValidationErrorsBag.Get("*"), validationErrors)
 }
@@ -406,9 +445,10 @@ func TestForValueWithContext(t *testing.T) {
 	)
 
 	// when
-	validationErrors := ForValueWithContext(ctx, data, valueRuleMocks...)
+	validationErrors, err := ForValueWithContext(ctx, data, valueRuleMocks...)
 
 	// then
+	require.NoError(t, err)
 	require.Len(t, validationErrors, 2)
 	require.Equal(t, valueValidationErrorsBag.Get("*"), validationErrors)
 }
