@@ -30,7 +30,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if err != nil {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return parsedValue, nil
@@ -39,7 +39,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0 && newValue != 1 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
@@ -48,7 +48,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0 && newValue != 1 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
@@ -57,7 +57,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0 && newValue != 1 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
@@ -66,7 +66,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0 && newValue != 1 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
@@ -75,7 +75,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0 && newValue != 1 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
@@ -84,7 +84,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0 && newValue != 1 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
@@ -93,7 +93,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0 && newValue != 1 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
@@ -102,7 +102,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0 && newValue != 1 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
@@ -111,7 +111,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0 && newValue != 1 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
@@ -120,7 +120,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0 && newValue != 1 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1, nil
@@ -129,7 +129,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0.0 && newValue != 1.0 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1.0, nil
@@ -138,7 +138,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 		if newValue != 0.0 && newValue != 1.0 {
 			r.MarkBailed()
 
-			return value, NewBooleanValidationError()
+			return nil, NewBooleanValidationError()
 		}
 
 		return newValue == 1.0, nil
@@ -146,7 +146,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 	default:
 		r.MarkBailed()
 
-		return value, NewBooleanValidationError()
+		return nil, NewBooleanValidationError()
 	}
 }
 

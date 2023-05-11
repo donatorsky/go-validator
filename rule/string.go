@@ -23,7 +23,7 @@ func (r *stringRule) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 	if _, ok := v.(string); !ok {
 		r.MarkBailed()
 
-		return value, NewStringValidationError()
+		return nil, NewStringValidationError()
 	}
 
 	return value, nil

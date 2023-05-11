@@ -24,7 +24,7 @@ func (r *integerRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.V
 	if newValue, ok := v.(Out); !ok {
 		r.MarkBailed()
 
-		return value, NewIntegerValidationError(
+		return nil, NewIntegerValidationError(
 			fmt.Sprintf("%T", newValue),
 			fmt.Sprintf("%T", v),
 		)

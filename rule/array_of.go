@@ -28,7 +28,7 @@ func (r *arrayOfRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.V
 	if typeOf.Kind() != reflect.Array {
 		r.MarkBailed()
 
-		return value, NewArrayOfValidationError(
+		return nil, NewArrayOfValidationError(
 			fmt.Sprintf("%T", el),
 			fmt.Sprintf("%T", v),
 		)
@@ -37,7 +37,7 @@ func (r *arrayOfRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.V
 	if !typeOf.Elem().AssignableTo(reflect.TypeOf(el)) {
 		r.MarkBailed()
 
-		return value, NewArrayOfValidationError(
+		return nil, NewArrayOfValidationError(
 			fmt.Sprintf("%T", el),
 			fmt.Sprintf("%T", v),
 		)

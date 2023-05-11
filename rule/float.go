@@ -24,7 +24,7 @@ func (r *floatRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.Val
 	if newValue, ok := v.(Out); !ok {
 		r.MarkBailed()
 
-		return value, NewFloatValidationError(
+		return nil, NewFloatValidationError(
 			fmt.Sprintf("%T", newValue),
 			fmt.Sprintf("%T", v),
 		)

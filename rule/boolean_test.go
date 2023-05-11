@@ -121,7 +121,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"int(2)": {
 			rule:             Boolean(),
 			value:            2,
-			expectedNewValue: 2,
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -157,7 +157,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"int8(2)": {
 			rule:             Boolean(),
 			value:            int8(2),
-			expectedNewValue: int8(2),
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -193,7 +193,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"int16(2)": {
 			rule:             Boolean(),
 			value:            int16(2),
-			expectedNewValue: int16(2),
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -229,7 +229,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"int32(2)": {
 			rule:             Boolean(),
 			value:            int32(2),
-			expectedNewValue: int32(2),
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -265,7 +265,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"int64(2)": {
 			rule:             Boolean(),
 			value:            int64(2),
-			expectedNewValue: int64(2),
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -301,7 +301,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"uint(2)": {
 			rule:             Boolean(),
 			value:            uint(2),
-			expectedNewValue: uint(2),
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -337,7 +337,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"uint8(2)": {
 			rule:             Boolean(),
 			value:            uint8(2),
-			expectedNewValue: uint8(2),
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -373,7 +373,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"uint16(2)": {
 			rule:             Boolean(),
 			value:            uint16(2),
-			expectedNewValue: uint16(2),
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -409,7 +409,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"uint32(2)": {
 			rule:             Boolean(),
 			value:            uint32(2),
-			expectedNewValue: uint32(2),
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -445,7 +445,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"uint64(2)": {
 			rule:             Boolean(),
 			value:            uint64(2),
-			expectedNewValue: uint64(2),
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -481,7 +481,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"float32(2.0)": {
 			rule:             Boolean(),
 			value:            float32(2.0),
-			expectedNewValue: float32(2.0),
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -517,7 +517,7 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"float64(2.0)": {
 			rule:             Boolean(),
 			value:            2.0,
-			expectedNewValue: 2.0,
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
@@ -526,42 +526,42 @@ func booleanRuleDataProvider() map[string]*ruleTestCaseData {
 		"complex": {
 			rule:             Boolean(),
 			value:            1 + 2i,
-			expectedNewValue: 1 + 2i,
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
 		"non-boolean string value": {
 			rule:             Boolean(),
 			value:            "foo",
-			expectedNewValue: "foo",
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
 		"slice": {
 			rule:             Boolean(),
 			value:            []int{},
-			expectedNewValue: []int{},
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
 		"array": {
 			rule:             Boolean(),
 			value:            [1]int{},
-			expectedNewValue: [1]int{},
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
 		"map": {
 			rule:             Boolean(),
 			value:            map[any]any{},
-			expectedNewValue: map[any]any{},
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},
 		"struct": {
 			rule:             Boolean(),
 			value:            someStruct{},
-			expectedNewValue: someStruct{},
+			expectedNewValue: nil,
 			expectedError:    NewBooleanValidationError(),
 			expectedToBail:   true,
 		},

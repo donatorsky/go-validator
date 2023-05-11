@@ -24,7 +24,7 @@ func (r *arrayRule) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 	if reflect.TypeOf(v).Kind() != reflect.Array {
 		r.MarkBailed()
 
-		return value, NewArrayValidationError()
+		return nil, NewArrayValidationError()
 	}
 
 	return value, nil

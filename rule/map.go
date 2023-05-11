@@ -24,7 +24,7 @@ func (r *mapRule) Apply(_ context.Context, value any, _ any) (any, ve.Validation
 	if reflect.TypeOf(v).Kind() != reflect.Map {
 		r.MarkBailed()
 
-		return value, NewMapValidationError()
+		return nil, NewMapValidationError()
 	}
 
 	return value, nil

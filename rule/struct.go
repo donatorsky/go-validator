@@ -24,7 +24,7 @@ func (r *structRule) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 	if reflect.TypeOf(v).Kind() != reflect.Struct {
 		r.MarkBailed()
 
-		return value, NewStructValidationError()
+		return nil, NewStructValidationError()
 	}
 
 	return value, nil

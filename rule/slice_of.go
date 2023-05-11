@@ -25,7 +25,7 @@ func (r *sliceOfRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.V
 		r.MarkBailed()
 
 		var el Out
-		return value, NewSliceOfValidationError(
+		return nil, NewSliceOfValidationError(
 			fmt.Sprintf("%T", el),
 			fmt.Sprintf("%T", v),
 		)

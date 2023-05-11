@@ -24,7 +24,7 @@ func (r *sliceRule) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 	if reflect.TypeOf(v).Kind() != reflect.Slice {
 		r.MarkBailed()
 
-		return value, NewSliceValidationError()
+		return nil, NewSliceValidationError()
 	}
 
 	return value, nil
