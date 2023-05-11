@@ -4,6 +4,7 @@ A Laravel-like data validator for Go.
 
 [![GitHub license](https://img.shields.io/github/license/donatorsky/go-validator)](https://github.com/donatorsky/go-validator/blob/main/LICENSE)
 [![Build](https://github.com/donatorsky/go-validator/workflows/Tests/badge.svg?branch=main)](https://github.com/donatorsky/go-validator/actions?query=branch%3Amain)
+[![codecov](https://codecov.io/gh/donatorsky/go-validator/branch/main/graph/badge.svg?token=LNSP9QBPQS)](https://codecov.io/gh/donatorsky/go-validator)
 
 Allows you to define a list of validation rules (constraints) for a specific field and produces a summary with failures.
 
