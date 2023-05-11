@@ -9,10 +9,7 @@ import (
 )
 
 func Test_BeforeRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range beforeRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, beforeRuleDataProvider)
 }
 
 func Test_BeforeValidationError(t *testing.T) {
@@ -30,12 +27,10 @@ func Test_BeforeValidationError(t *testing.T) {
 }
 
 func BenchmarkBeforeRule(b *testing.B) {
-	for ttIdx, tt := range beforeRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, beforeRuleDataProvider)
 }
 
-func beforeRuleDataProvider() []*ruleTestCaseData {
+func beforeRuleDataProvider() map[string]*ruleTestCaseData {
 	var (
 		nowDummy                    = time.Now()
 		tomorrowDummy               = time.Now().AddDate(0, 0, 1)
@@ -44,60 +39,60 @@ func beforeRuleDataProvider() []*ruleTestCaseData {
 		customBeforeComparable2Mock = newBeforeComparableMock(false)
 	)
 
-	return []*ruleTestCaseData{
-		{
+	return map[string]*ruleTestCaseData{
+		"nil": {
 			rule:             Before(nowDummy),
 			value:            nil,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
 
-		{
+		"date yesterday": {
 			rule:             Before(nowDummy),
 			value:            yesterdayDummy,
 			expectedNewValue: yesterdayDummy,
 			expectedError:    nil,
 		},
-		{
+		"date yesterday (pointer)": {
 			rule:             Before(nowDummy),
 			value:            &yesterdayDummy,
 			expectedNewValue: &yesterdayDummy,
 			expectedError:    nil,
 		},
 
-		{
+		"date today": {
 			rule:             After(nowDummy),
 			value:            nowDummy,
 			expectedNewValue: nowDummy,
 			expectedError:    NewAfterValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
-		{
+		"date today (pointer)": {
 			rule:             After(nowDummy),
 			value:            &nowDummy,
 			expectedNewValue: &nowDummy,
 			expectedError:    NewAfterValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
 
-		{
+		"date tomorrow": {
 			rule:             Before(nowDummy),
 			value:            tomorrowDummy,
 			expectedNewValue: tomorrowDummy,
 			expectedError:    NewBeforeValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
-		{
+		"date tomorrow (pointer)": {
 			rule:             Before(nowDummy),
 			value:            &tomorrowDummy,
 			expectedNewValue: &tomorrowDummy,
 			expectedError:    NewBeforeValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
 
-		{
+		"custom beforeComparable object: before": {
 			rule:             Before(nowDummy),
 			value:            customBeforeComparable1Mock,
 			expectedNewValue: customBeforeComparable1Mock,
 			expectedError:    nil,
 		},
-		{
+		"custom beforeComparable object: not before": {
 			rule:             Before(nowDummy),
 			value:            customBeforeComparable2Mock,
 			expectedNewValue: customBeforeComparable2Mock,
@@ -105,49 +100,49 @@ func beforeRuleDataProvider() []*ruleTestCaseData {
 		},
 
 		// unsupported values
-		{
+		"int": {
 			rule:             Before(nowDummy),
 			value:            0,
 			expectedNewValue: 0,
 			expectedError:    NewBeforeValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
-		{
+		"float": {
 			rule:             Before(nowDummy),
 			value:            0.0,
 			expectedNewValue: 0.0,
 			expectedError:    NewBeforeValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
-		{
+		"complex": {
 			rule:             Before(nowDummy),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
 			expectedError:    NewBeforeValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
-		{
+		"bool": {
 			rule:             Before(nowDummy),
 			value:            true,
 			expectedNewValue: true,
 			expectedError:    NewBeforeValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
-		{
+		"slice": {
 			rule:             Before(nowDummy),
 			value:            []int{},
 			expectedNewValue: []int{},
 			expectedError:    NewBeforeValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
-		{
+		"array": {
 			rule:             Before(nowDummy),
 			value:            [1]int{},
 			expectedNewValue: [1]int{},
 			expectedError:    NewBeforeValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
-		{
+		"map": {
 			rule:             Before(nowDummy),
 			value:            map[any]any{},
 			expectedNewValue: map[any]any{},
 			expectedError:    NewBeforeValidationError(nowDummy.Format(time.RFC3339Nano)),
 		},
-		{
+		"struct": {
 			rule:             Before(nowDummy),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},

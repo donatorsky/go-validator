@@ -10,8 +10,8 @@ import (
 
 func Test_InRule(t *testing.T) {
 	// given
-	for ttIdx, tt := range inRuleDataProvider() {
-		t.Run(fmt.Sprintf("#%[1]d: for value %[2]T(%[2]v)", ttIdx, tt.value), func(t *testing.T) {
+	for ttName, tt := range inRuleDataProvider() {
+		t.Run(ttName, func(t *testing.T) {
 			// when
 			newValue, err := tt.rule.Apply(context.Background(), tt.value, tt.data)
 
@@ -39,26 +39,24 @@ func Test_InValidationError(t *testing.T) {
 }
 
 func BenchmarkInRule(b *testing.B) {
-	for ttIdx, tt := range inRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, inRuleDataProvider)
 }
 
-func inRuleDataProvider() []*ruleTestCaseData {
+func inRuleDataProvider() map[string]*ruleTestCaseData {
 	var (
 		intDummy              = fakerInstance.IntBetween(-1000, 1000)
 		intValuesDummy        = []int{intDummy, intDummy + 1}
 		intPointerValuesDummy = []*int{&intDummy, ptr(intDummy + 1)}
 	)
 
-	return []*ruleTestCaseData{
-		{
+	return map[string]*ruleTestCaseData{
+		"nil": {
 			rule:             In(intValuesDummy),
 			value:            nil,
 			expectedNewValue: nil,
 			expectedError:    NewInValidationError(intValuesDummy),
 		},
-		{
+		"nil with custom validator allowing it": {
 			rule: In(intValuesDummy, InRuleWithComparator(func(value, expectedValue any) bool {
 				if value == nil {
 					return true
@@ -70,25 +68,25 @@ func inRuleDataProvider() []*ruleTestCaseData {
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
-		{
+		"existing int in empty slice": {
 			rule:             In([]int{}),
 			value:            intDummy,
 			expectedNewValue: intDummy,
 			expectedError:    NewInValidationError([]int{}),
 		},
-		{
+		"existing int in slice of ints": {
 			rule:             In(intValuesDummy),
 			value:            intDummy,
 			expectedNewValue: intDummy,
 			expectedError:    nil,
 		},
-		{
+		"existing int in slice of int pointers": {
 			rule:             In(intPointerValuesDummy),
 			value:            intDummy,
 			expectedNewValue: intDummy,
 			expectedError:    NewInValidationError(intPointerValuesDummy),
 		},
-		{
+		"existing int in slice of ints with custom comparator": {
 			rule: In(intValuesDummy, InRuleWithComparator(func(value, expectedValue any) bool {
 				if value == nil {
 					return true
@@ -100,44 +98,44 @@ func inRuleDataProvider() []*ruleTestCaseData {
 			expectedNewValue: intDummy,
 			expectedError:    nil,
 		},
-		{
+		"non-existing int in slice of ints": {
 			rule:             In(intValuesDummy),
 			value:            intDummy - 1,
 			expectedNewValue: intDummy - 1,
 			expectedError:    NewInValidationError(intValuesDummy),
 		},
-		{
+		"string in in slice of ints": {
 			rule:             In(intValuesDummy),
 			value:            "not an integer",
 			expectedNewValue: "not an integer",
 			expectedError:    NewInValidationError(intValuesDummy),
 		},
 
-		{
+		"existing int pointer in slice of ints": {
 			rule:             In(intValuesDummy),
 			value:            &intDummy,
 			expectedNewValue: &intDummy,
 			expectedError:    nil,
 		},
-		{
+		"existing int pointer in slice int pointers": {
 			rule:             In(intPointerValuesDummy),
 			value:            &intDummy,
 			expectedNewValue: &intDummy,
 			expectedError:    NewInValidationError(intPointerValuesDummy),
 		},
-		{
+		"existing int pointer in slice int pointers, without auto dereference": {
 			rule:             In(intPointerValuesDummy, InRuleWithoutAutoDereference()),
 			value:            &intDummy,
 			expectedNewValue: &intDummy,
 			expectedError:    nil,
 		},
-		{
+		"existing int pointer in slice of ints, without auto dereference": {
 			rule:             In(intValuesDummy, InRuleWithoutAutoDereference()),
 			value:            &intDummy,
 			expectedNewValue: &intDummy,
 			expectedError:    NewInValidationError(intValuesDummy),
 		},
-		{
+		"non-existing int pointer in slice of ints": {
 			rule:             In(intValuesDummy),
 			value:            ptr(intDummy - 1),
 			expectedNewValue: ptr(intDummy - 1),

@@ -8,10 +8,7 @@ import (
 )
 
 func Test_FloatRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range floatRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, floatRuleDataProvider)
 }
 
 func Test_FloatValidationError(t *testing.T) {
@@ -33,26 +30,24 @@ func Test_FloatValidationError(t *testing.T) {
 }
 
 func BenchmarkFloatRule(b *testing.B) {
-	for ttIdx, tt := range floatRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, floatRuleDataProvider)
 }
 
-func floatRuleDataProvider() []*ruleTestCaseData {
+func floatRuleDataProvider() map[string]*ruleTestCaseData {
 	var (
 		float32Dummy = fakerInstance.Float32(5, -1000, 1000)
 		float64Dummy = fakerInstance.Float64(5, -1000, 1000)
 	)
 
-	return []*ruleTestCaseData{
-		{
+	return map[string]*ruleTestCaseData{
+		"nil, float32 wanted": {
 			rule:             Float[float32](),
 			value:            nil,
 			expectedNewValue: (*float32)(nil),
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"nil, float64 wanted": {
 			rule:             Float[float64](),
 			value:            nil,
 			expectedNewValue: (*float64)(nil),
@@ -60,28 +55,28 @@ func floatRuleDataProvider() []*ruleTestCaseData {
 			expectedToBail:   false,
 		},
 
-		{
+		"float32": {
 			rule:             Float[float32](),
 			value:            float32Dummy,
 			expectedNewValue: float32Dummy,
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"*float32": {
 			rule:             Float[float32](),
 			value:            &float32Dummy,
 			expectedNewValue: &float32Dummy,
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"float64, float32 wanted": {
 			rule:             Float[float32](),
 			value:            float64Dummy,
 			expectedNewValue: float64Dummy,
 			expectedError:    NewFloatValidationError("float32", "float64"),
 			expectedToBail:   true,
 		},
-		{
+		"*float64, float32 wanted": {
 			rule:             Float[float32](),
 			value:            &float64Dummy,
 			expectedNewValue: &float64Dummy,
@@ -89,28 +84,28 @@ func floatRuleDataProvider() []*ruleTestCaseData {
 			expectedToBail:   true,
 		},
 
-		{
+		"float64": {
 			rule:             Float[float64](),
 			value:            float64Dummy,
 			expectedNewValue: float64Dummy,
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"*float64": {
 			rule:             Float[float64](),
 			value:            &float64Dummy,
 			expectedNewValue: &float64Dummy,
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"float32, float64 wanted": {
 			rule:             Float[float64](),
 			value:            float32Dummy,
 			expectedNewValue: float32Dummy,
 			expectedError:    NewFloatValidationError("float64", "float32"),
 			expectedToBail:   true,
 		},
-		{
+		"*float32, float64 wanted": {
 			rule:             Float[float64](),
 			value:            &float32Dummy,
 			expectedNewValue: &float32Dummy,
@@ -119,42 +114,42 @@ func floatRuleDataProvider() []*ruleTestCaseData {
 		},
 
 		// unsupported values
-		{
+		"int": {
 			rule:             Float[float64](),
 			value:            1,
 			expectedNewValue: 1,
 			expectedError:    NewFloatValidationError("float64", "int"),
 			expectedToBail:   true,
 		},
-		{
+		"complex": {
 			rule:             Float[float64](),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
 			expectedError:    NewFloatValidationError("float64", "complex128"),
 			expectedToBail:   true,
 		},
-		{
+		"string": {
 			rule:             Float[float64](),
 			value:            "foo",
 			expectedNewValue: "foo",
 			expectedError:    NewFloatValidationError("float64", "string"),
 			expectedToBail:   true,
 		},
-		{
+		"bool": {
 			rule:             Float[float64](),
 			value:            true,
 			expectedNewValue: true,
 			expectedError:    NewFloatValidationError("float64", "bool"),
 			expectedToBail:   true,
 		},
-		{
+		"map": {
 			rule:             Float[float64](),
 			value:            map[any]any{},
 			expectedNewValue: map[any]any{},
 			expectedError:    NewFloatValidationError("float64", "map[interface {}]interface {}"),
 			expectedToBail:   true,
 		},
-		{
+		"struct": {
 			rule:             Float[float64](),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},

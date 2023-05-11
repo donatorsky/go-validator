@@ -8,10 +8,7 @@ import (
 )
 
 func Test_ArrayOfRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range arrayOfRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, arrayOfRuleDataProvider)
 }
 
 func Test_ArrayOfValidationError(t *testing.T) {
@@ -33,19 +30,17 @@ func Test_ArrayOfValidationError(t *testing.T) {
 }
 
 func BenchmarkArrayOfRule(b *testing.B) {
-	for ttIdx, tt := range arrayOfRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, arrayOfRuleDataProvider)
 }
 
-func arrayOfRuleDataProvider() []*ruleTestCaseData {
+func arrayOfRuleDataProvider() map[string]*ruleTestCaseData {
 	var (
 		arrayOfIntsDummy        = [3]int{1, 2, 3}
 		arrayOfIntPointersDummy = [3]*int{ptr(1), ptr(2), ptr(3)}
 	)
 
-	return []*ruleTestCaseData{
-		{
+	return map[string]*ruleTestCaseData{
+		"nil": {
 			rule:             ArrayOf[int](),
 			value:            nil,
 			expectedNewValue: (*[0]int)(nil),
@@ -53,14 +48,14 @@ func arrayOfRuleDataProvider() []*ruleTestCaseData {
 			expectedToBail:   false,
 		},
 
-		{
+		"pointer to array of ints nil pointer": {
 			rule:             ArrayOf[int](),
 			value:            (*[0]int)(nil),
 			expectedNewValue: (*[0]int)(nil),
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"pointer to array of strings nil pointer, array of ints wanted": {
 			rule:             ArrayOf[int](),
 			value:            (*[]string)(nil),
 			expectedNewValue: (*[0]int)(nil),
@@ -68,28 +63,28 @@ func arrayOfRuleDataProvider() []*ruleTestCaseData {
 			expectedToBail:   false,
 		},
 
-		{
+		"array of ints": {
 			rule:             ArrayOf[int](),
 			value:            arrayOfIntsDummy,
 			expectedNewValue: arrayOfIntsDummy,
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"pointer to array of ints": {
 			rule:             ArrayOf[int](),
 			value:            &arrayOfIntsDummy,
 			expectedNewValue: &arrayOfIntsDummy,
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"array of int pointers, array of ints wanted": {
 			rule:             ArrayOf[int](),
 			value:            arrayOfIntPointersDummy,
 			expectedNewValue: arrayOfIntPointersDummy,
 			expectedError:    NewArrayOfValidationError("int", "[3]*int"),
 			expectedToBail:   true,
 		},
-		{
+		"pointer to array of int pointers, array of ints wanted": {
 			rule:             ArrayOf[int](),
 			value:            &arrayOfIntPointersDummy,
 			expectedNewValue: &arrayOfIntPointersDummy,
@@ -97,28 +92,28 @@ func arrayOfRuleDataProvider() []*ruleTestCaseData {
 			expectedToBail:   true,
 		},
 
-		{
+		"array of ints, array of int pointers wanted": {
 			rule:             ArrayOf[*int](),
 			value:            arrayOfIntsDummy,
 			expectedNewValue: arrayOfIntsDummy,
 			expectedError:    NewArrayOfValidationError("*int", "[3]int"),
 			expectedToBail:   true,
 		},
-		{
+		"pointer to array of ints, array of int pointers wanted": {
 			rule:             ArrayOf[*int](),
 			value:            &arrayOfIntsDummy,
 			expectedNewValue: &arrayOfIntsDummy,
 			expectedError:    NewArrayOfValidationError("*int", "[3]int"),
 			expectedToBail:   true,
 		},
-		{
+		"array of int pointers, array of int pointers wanted": {
 			rule:             ArrayOf[*int](),
 			value:            arrayOfIntPointersDummy,
 			expectedNewValue: arrayOfIntPointersDummy,
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"pointer to array of int pointers, array of int pointers wanted": {
 			rule:             ArrayOf[*int](),
 			value:            &arrayOfIntPointersDummy,
 			expectedNewValue: &arrayOfIntPointersDummy,
@@ -127,56 +122,56 @@ func arrayOfRuleDataProvider() []*ruleTestCaseData {
 		},
 
 		// unsupported values
-		{
+		"int": {
 			rule:             ArrayOf[int](),
 			value:            1,
 			expectedNewValue: 1,
 			expectedError:    NewArrayOfValidationError("int", "int"),
 			expectedToBail:   true,
 		},
-		{
+		"float": {
 			rule:             ArrayOf[int](),
 			value:            1.0,
 			expectedNewValue: 1.0,
 			expectedError:    NewArrayOfValidationError("int", "float64"),
 			expectedToBail:   true,
 		},
-		{
+		"complex": {
 			rule:             ArrayOf[int](),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
 			expectedError:    NewArrayOfValidationError("int", "complex128"),
 			expectedToBail:   true,
 		},
-		{
+		"string": {
 			rule:             ArrayOf[int](),
 			value:            "foo",
 			expectedNewValue: "foo",
 			expectedError:    NewArrayOfValidationError("int", "string"),
 			expectedToBail:   true,
 		},
-		{
+		"bool": {
 			rule:             ArrayOf[int](),
 			value:            true,
 			expectedNewValue: true,
 			expectedError:    NewArrayOfValidationError("int", "bool"),
 			expectedToBail:   true,
 		},
-		{
+		"slice": {
 			rule:             ArrayOf[int](),
 			value:            []int{},
 			expectedNewValue: []int{},
 			expectedError:    NewArrayOfValidationError("int", "[]int"),
 			expectedToBail:   true,
 		},
-		{
+		"map": {
 			rule:             ArrayOf[int](),
 			value:            map[any]any{},
 			expectedNewValue: map[any]any{},
 			expectedError:    NewArrayOfValidationError("int", "map[interface {}]interface {}"),
 			expectedToBail:   true,
 		},
-		{
+		"struct": {
 			rule:             ArrayOf[int](),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},

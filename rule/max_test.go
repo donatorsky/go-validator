@@ -10,10 +10,7 @@ import (
 )
 
 func Test_MaxRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range maxRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, maxRuleDataProvider)
 }
 
 func Test_MaxValidationError(t *testing.T) {
@@ -66,228 +63,226 @@ func Test_MaxValidationError(t *testing.T) {
 }
 
 func BenchmarkMaxRule(b *testing.B) {
-	for ttIdx, tt := range maxRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, maxRuleDataProvider)
 }
 
-func maxRuleDataProvider() []*ruleTestCaseData {
-	return []*ruleTestCaseData{
-		{
+func maxRuleDataProvider() map[string]*ruleTestCaseData {
+	return map[string]*ruleTestCaseData{
+		"nil": {
 			rule:             Max(3),
 			value:            nil,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
 
-		{
+		"string of length 3": {
 			rule:             Max(3),
 			value:            "abc",
 			expectedNewValue: "abc",
 			expectedError:    nil,
 		},
-		{
+		"string of length 4": {
 			rule:             Max(3),
 			value:            "abcd",
 			expectedNewValue: "abcd",
 			expectedError:    NewMaxValidationError(ve.SubtypeString, 3),
 		},
 
-		{
+		"int(3)": {
 			rule:             Max(3),
 			value:            3,
 			expectedNewValue: 3,
 			expectedError:    nil,
 		},
-		{
+		"int(4)": {
 			rule:             Max(3),
 			value:            4,
 			expectedNewValue: 4,
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"*int(3)": {
 			rule:             Max(3),
 			value:            ptr(3),
 			expectedNewValue: ptr(3),
 			expectedError:    nil,
 		},
 
-		{
+		"int8(3)": {
 			rule:             Max(3),
 			value:            int8(3),
 			expectedNewValue: int8(3),
 			expectedError:    nil,
 		},
-		{
+		"int8(4)": {
 			rule:             Max(3),
 			value:            int8(4),
 			expectedNewValue: int8(4),
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"int16(3)": {
 			rule:             Max(3),
 			value:            int16(3),
 			expectedNewValue: int16(3),
 			expectedError:    nil,
 		},
-		{
+		"int16(4)": {
 			rule:             Max(3),
 			value:            int16(4),
 			expectedNewValue: int16(4),
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"int32(3)": {
 			rule:             Max(3),
 			value:            int32(3),
 			expectedNewValue: int32(3),
 			expectedError:    nil,
 		},
-		{
+		"int32(4)": {
 			rule:             Max(3),
 			value:            int32(4),
 			expectedNewValue: int32(4),
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"int64(3)": {
 			rule:             Max(3),
 			value:            int64(3),
 			expectedNewValue: int64(3),
 			expectedError:    nil,
 		},
-		{
+		"int64(4)": {
 			rule:             Max(3),
 			value:            int64(4),
 			expectedNewValue: int64(4),
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"uint(3)": {
 			rule:             Max(3),
 			value:            uint(3),
 			expectedNewValue: uint(3),
 			expectedError:    nil,
 		},
-		{
+		"uint(4)": {
 			rule:             Max(3),
 			value:            uint(4),
 			expectedNewValue: uint(4),
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"uint8(3)": {
 			rule:             Max(3),
 			value:            uint8(3),
 			expectedNewValue: uint8(3),
 			expectedError:    nil,
 		},
-		{
+		"uint8(4)": {
 			rule:             Max(3),
 			value:            uint8(4),
 			expectedNewValue: uint8(4),
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"uint16(3)": {
 			rule:             Max(3),
 			value:            uint16(3),
 			expectedNewValue: uint16(3),
 			expectedError:    nil,
 		},
-		{
+		"uint16(4)": {
 			rule:             Max(3),
 			value:            uint16(4),
 			expectedNewValue: uint16(4),
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"uint32(3)": {
 			rule:             Max(3),
 			value:            uint32(3),
 			expectedNewValue: uint32(3),
 			expectedError:    nil,
 		},
-		{
+		"uint32(4)": {
 			rule:             Max(3),
 			value:            uint32(4),
 			expectedNewValue: uint32(4),
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"uint64(3)": {
 			rule:             Max(3),
 			value:            uint64(3),
 			expectedNewValue: uint64(3),
 			expectedError:    nil,
 		},
-		{
+		"uint64(4)": {
 			rule:             Max(3),
 			value:            uint64(4),
 			expectedNewValue: uint64(4),
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"float32(3.0)": {
 			rule:             Max(3),
 			value:            float32(3.0),
 			expectedNewValue: float32(3.0),
 			expectedError:    nil,
 		},
-		{
+		"float32(3.01)": {
 			rule:             Max(3),
 			value:            float32(3.01),
 			expectedNewValue: float32(3.01),
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"float64(3.0)": {
 			rule:             Max(3),
 			value:            3.0,
 			expectedNewValue: 3.0,
 			expectedError:    nil,
 		},
-		{
+		"float64(3.01)": {
 			rule:             Max(3),
 			value:            3.01,
 			expectedNewValue: 3.01,
 			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3),
 		},
 
-		{
+		"slice with 3 items": {
 			rule:             Max(3),
 			value:            []int{1, 2, 3},
 			expectedNewValue: []int{1, 2, 3},
 			expectedError:    nil,
 		},
-		{
+		"slice with 4 items": {
 			rule:             Max(3),
 			value:            []int{1, 2, 3, 4},
 			expectedNewValue: []int{1, 2, 3, 4},
 			expectedError:    NewMaxValidationError(ve.SubtypeSlice, 3),
 		},
 
-		{
+		"array with 3 items": {
 			rule:             Max(3),
 			value:            [3]int{1, 2, 3},
 			expectedNewValue: [3]int{1, 2, 3},
 			expectedError:    nil,
 		},
-		{
+		"array with 4 items": {
 			rule:             Max(3),
 			value:            [4]int{1, 2, 3, 4},
 			expectedNewValue: [4]int{1, 2, 3, 4},
 			expectedError:    NewMaxValidationError(ve.SubtypeSlice, 3),
 		},
 
-		{
+		"map with 3 keys": {
 			rule:             Max(3),
 			value:            map[any]int{1: 1, "a": 2, 3.0: 3},
 			expectedNewValue: map[any]int{1: 1, "a": 2, 3.0: 3},
 			expectedError:    nil,
 		},
-		{
+		"map with 4 keys": {
 			rule:             Max(3),
 			value:            map[any]int{1: 1, "a": 2, 3.0: 3, true: 4},
 			expectedNewValue: map[any]int{1: 1, "a": 2, 3.0: 3, true: 4},
@@ -295,22 +290,22 @@ func maxRuleDataProvider() []*ruleTestCaseData {
 		},
 
 		// unsupported values
-		{
+		"complex": {
 			rule:             Max(3),
-			value:            someStruct{},
-			expectedNewValue: someStruct{},
+			value:            1 + 2i,
+			expectedNewValue: 1 + 2i,
 			expectedError:    nil,
 		},
-		{
+		"bool": {
 			rule:             Max(3),
 			value:            true,
 			expectedNewValue: true,
 			expectedError:    nil,
 		},
-		{
+		"struct": {
 			rule:             Max(3),
-			value:            1 + 2i,
-			expectedNewValue: 1 + 2i,
+			value:            someStruct{},
+			expectedNewValue: someStruct{},
 			expectedError:    nil,
 		},
 	}

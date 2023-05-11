@@ -10,10 +10,7 @@ import (
 )
 
 func Test_MinRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range minRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, minRuleDataProvider)
 }
 
 func Test_MinValidationError(t *testing.T) {
@@ -66,228 +63,226 @@ func Test_MinValidationError(t *testing.T) {
 }
 
 func BenchmarkMinRule(b *testing.B) {
-	for ttIdx, tt := range minRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, minRuleDataProvider)
 }
 
-func minRuleDataProvider() []*ruleTestCaseData {
-	return []*ruleTestCaseData{
-		{
+func minRuleDataProvider() map[string]*ruleTestCaseData {
+	return map[string]*ruleTestCaseData{
+		"nil": {
 			rule:             Min(3),
 			value:            nil,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
 
-		{
+		"string of length 2": {
 			rule:             Min(3),
 			value:            "ab",
 			expectedNewValue: "ab",
 			expectedError:    NewMinValidationError(ve.SubtypeString, 3),
 		},
-		{
+		"string of length 3": {
 			rule:             Min(3),
 			value:            "abc",
 			expectedNewValue: "abc",
 			expectedError:    nil,
 		},
 
-		{
+		"int(2)": {
 			rule:             Min(3),
 			value:            2,
 			expectedNewValue: 2,
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"int(3)": {
 			rule:             Min(3),
 			value:            3,
 			expectedNewValue: 3,
 			expectedError:    nil,
 		},
-		{
+		"*int(3)": {
 			rule:             Min(3),
 			value:            ptr(3),
 			expectedNewValue: ptr(3),
 			expectedError:    nil,
 		},
 
-		{
+		"int8(2)": {
 			rule:             Min(3),
 			value:            int8(2),
 			expectedNewValue: int8(2),
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"int8(3)": {
 			rule:             Min(3),
 			value:            int8(3),
 			expectedNewValue: int8(3),
 			expectedError:    nil,
 		},
 
-		{
+		"int16(2)": {
 			rule:             Min(3),
 			value:            int16(2),
 			expectedNewValue: int16(2),
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"int16(3)": {
 			rule:             Min(3),
 			value:            int16(3),
 			expectedNewValue: int16(3),
 			expectedError:    nil,
 		},
 
-		{
+		"int32(2)": {
 			rule:             Min(3),
 			value:            int32(2),
 			expectedNewValue: int32(2),
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"int32(3)": {
 			rule:             Min(3),
 			value:            int32(3),
 			expectedNewValue: int32(3),
 			expectedError:    nil,
 		},
 
-		{
+		"int64(2)": {
 			rule:             Min(3),
 			value:            int64(2),
 			expectedNewValue: int64(2),
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"int64(3)": {
 			rule:             Min(3),
 			value:            int64(3),
 			expectedNewValue: int64(3),
 			expectedError:    nil,
 		},
 
-		{
+		"uint(2)": {
 			rule:             Min(3),
 			value:            uint(2),
 			expectedNewValue: uint(2),
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"uint(3)": {
 			rule:             Min(3),
 			value:            uint(3),
 			expectedNewValue: uint(3),
 			expectedError:    nil,
 		},
 
-		{
+		"uint8(2)": {
 			rule:             Min(3),
 			value:            uint8(2),
 			expectedNewValue: uint8(2),
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"uint8(3)": {
 			rule:             Min(3),
 			value:            uint8(3),
 			expectedNewValue: uint8(3),
 			expectedError:    nil,
 		},
 
-		{
+		"uint16(2)": {
 			rule:             Min(3),
 			value:            uint16(2),
 			expectedNewValue: uint16(2),
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"uint16(3)": {
 			rule:             Min(3),
 			value:            uint16(3),
 			expectedNewValue: uint16(3),
 			expectedError:    nil,
 		},
 
-		{
+		"uint32(2)": {
 			rule:             Min(3),
 			value:            uint32(2),
 			expectedNewValue: uint32(2),
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"uint32(3)": {
 			rule:             Min(3),
 			value:            uint32(3),
 			expectedNewValue: uint32(3),
 			expectedError:    nil,
 		},
 
-		{
+		"uint64(2)": {
 			rule:             Min(3),
 			value:            uint64(2),
 			expectedNewValue: uint64(2),
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"uint64(3)": {
 			rule:             Min(3),
 			value:            uint64(3),
 			expectedNewValue: uint64(3),
 			expectedError:    nil,
 		},
 
-		{
+		"float32(2.99)": {
 			rule:             Min(3),
 			value:            float32(2.99),
 			expectedNewValue: float32(2.99),
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"float32(3.0)": {
 			rule:             Min(3),
 			value:            float32(3.0),
 			expectedNewValue: float32(3.0),
 			expectedError:    nil,
 		},
 
-		{
+		"float64(2.99)": {
 			rule:             Min(3),
 			value:            2.99,
 			expectedNewValue: 2.99,
 			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3),
 		},
-		{
+		"float64(3.0)": {
 			rule:             Min(3),
 			value:            3.0,
 			expectedNewValue: 3.0,
 			expectedError:    nil,
 		},
 
-		{
+		"slice with 2 items": {
 			rule:             Min(3),
 			value:            []int{1, 2},
 			expectedNewValue: []int{1, 2},
 			expectedError:    NewMinValidationError(ve.SubtypeSlice, 3),
 		},
-		{
+		"slice with 3 items": {
 			rule:             Min(3),
 			value:            []int{1, 2, 3},
 			expectedNewValue: []int{1, 2, 3},
 			expectedError:    nil,
 		},
 
-		{
+		"array with 2 items": {
 			rule:             Min(3),
 			value:            [2]int{1, 2},
 			expectedNewValue: [2]int{1, 2},
 			expectedError:    NewMinValidationError(ve.SubtypeSlice, 3),
 		},
-		{
+		"array with 3 items": {
 			rule:             Min(3),
 			value:            [3]int{1, 2, 3},
 			expectedNewValue: [3]int{1, 2, 3},
 			expectedError:    nil,
 		},
 
-		{
+		"map with 2 keys": {
 			rule:             Min(3),
 			value:            map[any]int{1: 1, "a": 2},
 			expectedNewValue: map[any]int{1: 1, "a": 2},
 			expectedError:    NewMinValidationError(ve.SubtypeMap, 3),
 		},
-		{
+		"map with 3 keys": {
 			rule:             Min(3),
 			value:            map[any]int{1: 1, "a": 2, 3.0: 3},
 			expectedNewValue: map[any]int{1: 1, "a": 2, 3.0: 3},
@@ -295,19 +290,19 @@ func minRuleDataProvider() []*ruleTestCaseData {
 		},
 
 		// unsupported values
-		{
+		"complex": {
 			rule:             Min(3),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
 			expectedError:    nil,
 		},
-		{
+		"bool": {
 			rule:             Min(3),
 			value:            true,
 			expectedNewValue: true,
 			expectedError:    nil,
 		},
-		{
+		"struct": {
 			rule:             Min(3),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},

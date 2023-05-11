@@ -8,16 +8,11 @@ import (
 )
 
 func Test_WhenFuncRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range whenFuncRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, whenFuncRuleDataProvider)
 }
 
 func BenchmarkWhenFuncRule(b *testing.B) {
-	for ttIdx, tt := range whenFuncRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, whenFuncRuleDataProvider)
 }
 
 func TestWhenFunc_Rules(t *testing.T) {
@@ -101,46 +96,44 @@ func TestWhenFunc_Rules(t *testing.T) {
 	}
 }
 
-func whenFuncRuleDataProvider() []*ruleTestCaseData {
-	var (
-		stringDummy = fakerInstance.Lorem().Sentence(6)
-	)
+func whenFuncRuleDataProvider() map[string]*ruleTestCaseData {
+	var stringDummy = fakerInstance.Lorem().Sentence(6)
 
-	return []*ruleTestCaseData{
-		{
+	return map[string]*ruleTestCaseData{
+		"nil, condition fails": {
 			rule:             WhenFunc(func(_ context.Context, _ any, _ any) bool { return false }, nil),
 			value:            nil,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
 
-		{
+		"nil, condition succeeds": {
 			rule:             WhenFunc(func(_ context.Context, _ any, _ any) bool { return true }, nil),
 			value:            nil,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
 
-		{
+		"string, condition fails": {
 			rule:             WhenFunc(func(_ context.Context, _ any, _ any) bool { return false }, nil),
 			value:            stringDummy,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
-		{
+		"string, condition succeeds": {
 			rule:             WhenFunc(func(_ context.Context, _ any, _ any) bool { return true }, nil),
 			value:            stringDummy,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
 
-		{
+		"string pointer, condition fails": {
 			rule:             WhenFunc(func(_ context.Context, _ any, _ any) bool { return false }, nil),
 			value:            &stringDummy,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
-		{
+		"string pointer, condition succeeds": {
 			rule:             WhenFunc(func(_ context.Context, _ any, _ any) bool { return true }, nil),
 			value:            &stringDummy,
 			expectedNewValue: nil,

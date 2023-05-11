@@ -8,16 +8,11 @@ import (
 )
 
 func Test_WhenRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range whenRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, whenRuleDataProvider)
 }
 
 func BenchmarkWhenRule(b *testing.B) {
-	for ttIdx, tt := range whenRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, whenRuleDataProvider)
 }
 
 func TestWhen_Rules(t *testing.T) {
@@ -81,46 +76,44 @@ func TestWhen_Rules(t *testing.T) {
 	}
 }
 
-func whenRuleDataProvider() []*ruleTestCaseData {
-	var (
-		stringDummy = fakerInstance.Lorem().Sentence(6)
-	)
+func whenRuleDataProvider() map[string]*ruleTestCaseData {
+	var stringDummy = fakerInstance.Lorem().Sentence(6)
 
-	return []*ruleTestCaseData{
-		{
+	return map[string]*ruleTestCaseData{
+		"nil, condition fails": {
 			rule:             When(false, nil),
 			value:            nil,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
 
-		{
+		"nil, condition succeeds": {
 			rule:             When(true, nil),
 			value:            nil,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
 
-		{
+		"string, condition fails": {
 			rule:             When(false, nil),
 			value:            stringDummy,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
-		{
+		"string, condition succeeds": {
 			rule:             When(true, nil),
 			value:            stringDummy,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
 
-		{
+		"string pointer, condition fails": {
 			rule:             When(false, nil),
 			value:            &stringDummy,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
-		{
+		"string pointer, condition succeeds": {
 			rule:             When(true, nil),
 			value:            &stringDummy,
 			expectedNewValue: nil,

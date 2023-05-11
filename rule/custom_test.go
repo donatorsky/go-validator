@@ -11,10 +11,7 @@ import (
 )
 
 func Test_CustomRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range customRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, customRuleDataProvider)
 }
 
 func Test_CustomValidationError(t *testing.T) {
@@ -32,20 +29,18 @@ func Test_CustomValidationError(t *testing.T) {
 }
 
 func BenchmarkCustomRule(b *testing.B) {
-	for ttIdx, tt := range customRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, customRuleDataProvider)
 }
 
-func customRuleDataProvider() []*ruleTestCaseData {
+func customRuleDataProvider() map[string]*ruleTestCaseData {
 	var (
 		inputDummy        = fakerInstance.Lorem().Sentence(6)
 		outputDummy       = fakerInstance.Int()
 		errorMessageDummy = fakerInstance.Lorem().Sentence(5)
 	)
 
-	return []*ruleTestCaseData{
-		{
+	return map[string]*ruleTestCaseData{
+		"string input, int output": {
 			rule: Custom(func(_ context.Context, value string, _ any) (int, error) {
 				return outputDummy, nil
 			}),
@@ -54,7 +49,7 @@ func customRuleDataProvider() []*ruleTestCaseData {
 			expectedError:    nil,
 		},
 
-		{
+		"string input, int output, but int input wanted": {
 			rule: Custom(func(_ context.Context, value int, _ any) (int, error) {
 				return outputDummy, nil
 			}),
@@ -63,22 +58,22 @@ func customRuleDataProvider() []*ruleTestCaseData {
 			expectedError:    NewCustomValidationError(errors.New("invalid data type provided: string, expected int")),
 		},
 
-		{
-			rule: Custom(func(_ context.Context, value string, _ any) (int, error) {
-				return outputDummy, customError{Value: value}
-			}),
-			value:            inputDummy,
-			expectedNewValue: inputDummy,
-			expectedError:    customError{Value: inputDummy},
-		},
-
-		{
+		"error": {
 			rule: Custom(func(_ context.Context, value string, _ any) (int, error) {
 				return outputDummy, errors.New(errorMessageDummy)
 			}),
 			value:            inputDummy,
 			expectedNewValue: inputDummy,
 			expectedError:    NewCustomValidationError(errors.New(errorMessageDummy)),
+		},
+
+		"custom error": {
+			rule: Custom(func(_ context.Context, value string, _ any) (int, error) {
+				return outputDummy, customError{Value: value}
+			}),
+			value:            inputDummy,
+			expectedNewValue: inputDummy,
+			expectedError:    customError{Value: inputDummy},
 		},
 	}
 }

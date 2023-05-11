@@ -7,10 +7,7 @@ import (
 )
 
 func Test_StringRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range stringRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, stringRuleDataProvider)
 }
 
 func Test_StringValidationError(t *testing.T) {
@@ -22,16 +19,14 @@ func Test_StringValidationError(t *testing.T) {
 }
 
 func BenchmarkStringRule(b *testing.B) {
-	for ttIdx, tt := range stringRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, stringRuleDataProvider)
 }
 
-func stringRuleDataProvider() []*ruleTestCaseData {
+func stringRuleDataProvider() map[string]*ruleTestCaseData {
 	var stringDummy = fakerInstance.Lorem().Sentence(6)
 
-	return []*ruleTestCaseData{
-		{
+	return map[string]*ruleTestCaseData{
+		"nil": {
 			rule:             String(),
 			value:            nil,
 			expectedNewValue: (*string)(nil),
@@ -39,14 +34,14 @@ func stringRuleDataProvider() []*ruleTestCaseData {
 			expectedToBail:   false,
 		},
 
-		{
+		"string": {
 			rule:             String(),
 			value:            stringDummy,
 			expectedNewValue: stringDummy,
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"*string": {
 			rule:             String(),
 			value:            &stringDummy,
 			expectedNewValue: &stringDummy,
@@ -55,56 +50,56 @@ func stringRuleDataProvider() []*ruleTestCaseData {
 		},
 
 		// unsupported values
-		{
+		"int": {
 			rule:             String(),
 			value:            0,
 			expectedNewValue: 0,
 			expectedError:    NewStringValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"float": {
 			rule:             String(),
 			value:            0.0,
 			expectedNewValue: 0.0,
 			expectedError:    NewStringValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"complex": {
 			rule:             String(),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
 			expectedError:    NewStringValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"bool": {
 			rule:             String(),
 			value:            true,
 			expectedNewValue: true,
 			expectedError:    NewStringValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"slice": {
 			rule:             String(),
 			value:            []int{},
 			expectedNewValue: []int{},
 			expectedError:    NewStringValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"array": {
 			rule:             String(),
 			value:            [1]int{},
 			expectedNewValue: [1]int{},
 			expectedError:    NewStringValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"map": {
 			rule:             String(),
 			value:            map[any]any{},
 			expectedNewValue: map[any]any{},
 			expectedError:    NewStringValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"struct": {
 			rule:             String(),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},

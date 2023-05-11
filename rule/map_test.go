@@ -7,10 +7,7 @@ import (
 )
 
 func Test_MapRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range mapRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, mapRuleDataProvider)
 }
 
 func Test_MapValidationError(t *testing.T) {
@@ -22,16 +19,14 @@ func Test_MapValidationError(t *testing.T) {
 }
 
 func BenchmarkMapRule(b *testing.B) {
-	for ttIdx, tt := range mapRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, mapRuleDataProvider)
 }
 
-func mapRuleDataProvider() []*ruleTestCaseData {
+func mapRuleDataProvider() map[string]*ruleTestCaseData {
 	var mapDummy = map[int]int{0: 1, 1: 2, 2: 3}
 
-	return []*ruleTestCaseData{
-		{
+	return map[string]*ruleTestCaseData{
+		"nil": {
 			rule:             Map(),
 			value:            nil,
 			expectedNewValue: nil,
@@ -39,7 +34,7 @@ func mapRuleDataProvider() []*ruleTestCaseData {
 			expectedToBail:   false,
 		},
 
-		{
+		"pointer to map nil pointer": {
 			rule:             Map(),
 			value:            (*map[int]int)(nil),
 			expectedNewValue: (*map[int]int)(nil),
@@ -47,14 +42,14 @@ func mapRuleDataProvider() []*ruleTestCaseData {
 			expectedToBail:   false,
 		},
 
-		{
+		"map": {
 			rule:             Map(),
 			value:            mapDummy,
 			expectedNewValue: mapDummy,
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"pointer to map": {
 			rule:             Map(),
 			value:            &mapDummy,
 			expectedNewValue: &mapDummy,
@@ -63,56 +58,56 @@ func mapRuleDataProvider() []*ruleTestCaseData {
 		},
 
 		// unsupported values
-		{
+		"int": {
 			rule:             Map(),
 			value:            1,
 			expectedNewValue: 1,
 			expectedError:    NewMapValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"float": {
 			rule:             Map(),
 			value:            1.0,
 			expectedNewValue: 1.0,
 			expectedError:    NewMapValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"complex": {
 			rule:             Map(),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
 			expectedError:    NewMapValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"string": {
 			rule:             Map(),
 			value:            "foo",
 			expectedNewValue: "foo",
 			expectedError:    NewMapValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"bool": {
 			rule:             Map(),
 			value:            true,
 			expectedNewValue: true,
 			expectedError:    NewMapValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"slice": {
 			rule:             Map(),
 			value:            []int{},
 			expectedNewValue: []int{},
 			expectedError:    NewMapValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"array": {
 			rule:             Map(),
 			value:            [1]int{},
 			expectedNewValue: [1]int{},
 			expectedError:    NewMapValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"struct": {
 			rule:             Map(),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},

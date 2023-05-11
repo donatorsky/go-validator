@@ -7,10 +7,7 @@ import (
 )
 
 func Test_ArrayRule(t *testing.T) {
-	// given
-	for ttIdx, tt := range arrayRuleDataProvider() {
-		runRuleTestCase(t, ttIdx, tt)
-	}
+	runRuleTestCases(t, arrayRuleDataProvider)
 }
 
 func Test_ArrayValidationError(t *testing.T) {
@@ -22,16 +19,14 @@ func Test_ArrayValidationError(t *testing.T) {
 }
 
 func BenchmarkArrayRule(b *testing.B) {
-	for ttIdx, tt := range arrayRuleDataProvider() {
-		runRuleBenchmark(b, ttIdx, tt)
-	}
+	runRuleBenchmarks(b, arrayRuleDataProvider)
 }
 
-func arrayRuleDataProvider() []*ruleTestCaseData {
+func arrayRuleDataProvider() map[string]*ruleTestCaseData {
 	var arrayDummy = [3]int{1, 2, 3}
 
-	return []*ruleTestCaseData{
-		{
+	return map[string]*ruleTestCaseData{
+		"nil": {
 			rule:             Array(),
 			value:            nil,
 			expectedNewValue: nil,
@@ -39,7 +34,7 @@ func arrayRuleDataProvider() []*ruleTestCaseData {
 			expectedToBail:   false,
 		},
 
-		{
+		"pointer to array nil pointer": {
 			rule:             Array(),
 			value:            (*[3]any)(nil),
 			expectedNewValue: (*[3]any)(nil),
@@ -47,14 +42,14 @@ func arrayRuleDataProvider() []*ruleTestCaseData {
 			expectedToBail:   false,
 		},
 
-		{
+		"array": {
 			rule:             Array(),
 			value:            arrayDummy,
 			expectedNewValue: arrayDummy,
 			expectedError:    nil,
 			expectedToBail:   false,
 		},
-		{
+		"pointer to array": {
 			rule:             Array(),
 			value:            &arrayDummy,
 			expectedNewValue: &arrayDummy,
@@ -63,56 +58,56 @@ func arrayRuleDataProvider() []*ruleTestCaseData {
 		},
 
 		// unsupported values
-		{
+		"int": {
 			rule:             Array(),
 			value:            1,
 			expectedNewValue: 1,
 			expectedError:    NewArrayValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"float": {
 			rule:             Array(),
 			value:            1.0,
 			expectedNewValue: 1.0,
 			expectedError:    NewArrayValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"complex": {
 			rule:             Array(),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
 			expectedError:    NewArrayValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"string": {
 			rule:             Array(),
 			value:            "foo",
 			expectedNewValue: "foo",
 			expectedError:    NewArrayValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"bool": {
 			rule:             Array(),
 			value:            true,
 			expectedNewValue: true,
 			expectedError:    NewArrayValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"slice": {
 			rule:             Array(),
 			value:            []int{},
 			expectedNewValue: []int{},
 			expectedError:    NewArrayValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"map": {
 			rule:             Array(),
 			value:            map[any]any{},
 			expectedNewValue: map[any]any{},
 			expectedError:    NewArrayValidationError(),
 			expectedToBail:   true,
 		},
-		{
+		"struct": {
 			rule:             Array(),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},
