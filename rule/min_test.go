@@ -267,7 +267,7 @@ func minRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             Min(3),
 			value:            [2]int{1, 2},
 			expectedNewValue: [2]int{1, 2},
-			expectedError:    NewMinValidationError(ve.SubtypeSlice, 3),
+			expectedError:    NewMinValidationError(ve.SubtypeArray, 3),
 		},
 		"array with 3 items": {
 			rule:             Min(3),

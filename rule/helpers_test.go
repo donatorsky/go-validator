@@ -86,6 +86,5 @@ type ruleMock struct {
 }
 
 func (r *ruleMock) Apply(_ context.Context, _ any, _ any) (any, ve.ValidationError) {
-	//TODO implement me
 	panic("implement me")
 }

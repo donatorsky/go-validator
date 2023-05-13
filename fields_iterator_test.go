@@ -121,6 +121,8 @@ func BenchmarkFieldsIterator_InvalidValue(b *testing.B) {
 				for value := range newFieldsIterator(tt.field, tt.data) {
 					values = append(values, value)
 				}
+
+				_ = values
 			}
 		})
 	}
@@ -135,6 +137,8 @@ func BenchmarkFieldsIterator_Slice(b *testing.B) {
 				for value := range newFieldsIterator(tt.field, tt.data) {
 					values = append(values, value)
 				}
+
+				_ = values
 			}
 		})
 	}
@@ -149,6 +153,8 @@ func BenchmarkFieldsIterator_Array(b *testing.B) {
 				for value := range newFieldsIterator(tt.field, tt.data) {
 					values = append(values, value)
 				}
+
+				_ = values
 			}
 		})
 	}
@@ -163,6 +169,8 @@ func BenchmarkFieldsIterator_Map(b *testing.B) {
 				for value := range newFieldsIterator(tt.field, tt.data) {
 					values = append(values, value)
 				}
+
+				_ = values
 			}
 		})
 	}
@@ -177,6 +185,8 @@ func BenchmarkFieldsIterator_Struct(b *testing.B) {
 				for value := range newFieldsIterator(tt.field, tt.data) {
 					values = append(values, value)
 				}
+
+				_ = values
 			}
 		})
 	}
@@ -191,6 +201,8 @@ func BenchmarkFieldsIterator_Mixed(b *testing.B) {
 				for value := range newFieldsIterator(tt.field, tt.data) {
 					values = append(values, value)
 				}
+
+				_ = values
 			}
 		})
 	}
@@ -1407,18 +1419,23 @@ type someStruct struct {
 }
 
 func getType(v any) string {
+	const (
+		typeInterface = "interface {}"
+		typeAny       = "any"
+	)
+
 	valueOf := reflect.ValueOf(v)
 
 	if !valueOf.IsValid() {
 		return "nil"
 	}
 
-	for valueOf.Kind() == reflect.Pointer {
-		if valueOf.IsNil() {
-			return valueOf.Type().String()
-		} else {
+	if valueOf.Kind() == reflect.Pointer {
+		if !valueOf.IsNil() {
 			return "*" + getType(valueOf.Elem().Interface())
 		}
+
+		return valueOf.Type().String()
 	}
 
 	switch typeOf := reflect.TypeOf(v); typeOf.Kind() {
@@ -1438,8 +1455,8 @@ func getType(v any) string {
 		}
 
 		typeName := typeOf.Elem().String()
-		if typeName == "interface {}" {
-			typeName = "any"
+		if typeName == typeInterface {
+			typeName = typeAny
 		} else {
 			typeName = strings.Replace(typeName, "validator.", "", 1)
 		}
@@ -1462,15 +1479,15 @@ func getType(v any) string {
 		}
 
 		keyName := typeOf.Key().String()
-		if keyName == "interface {}" {
-			keyName = "any"
+		if keyName == typeInterface {
+			keyName = typeAny
 		} else {
 			keyName = strings.Replace(keyName, "validator.", "", 1)
 		}
 
 		typeName := typeOf.Elem().String()
-		if typeName == "interface {}" {
-			typeName = "any"
+		if typeName == typeInterface {
+			typeName = typeAny
 		} else {
 			typeName = strings.Replace(typeName, "validator.", "", 1)
 		}

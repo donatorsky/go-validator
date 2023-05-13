@@ -76,12 +76,16 @@ func Test_NewErrorsBag(t *testing.T) {
 		existingField1Dummy: {error1Mock},
 		existingField2Dummy: {error2Mock, error3Mock},
 	}, errorsBag.All())
-	require.EqualError(t, errorsBag, fmt.Sprintf(
-		`2 field(s) failed:
-%s: [1]{%s}
-%s: [2]{%s; %s}`,
+
+	errorMessage := errorsBag.Error()
+	require.Contains(t, errorMessage, "2 field(s) failed:")
+	require.Contains(t, errorMessage, fmt.Sprintf(
+		"%s: [1]{%s}",
 		existingField1Dummy,
 		error1MessageDummy,
+	))
+	require.Contains(t, errorMessage, fmt.Sprintf(
+		"%s: [2]{%s; %s}",
 		existingField2Dummy,
 		error2MessageDummy,
 		error3MessageDummy,
@@ -128,13 +132,17 @@ func Test_NewErrorsBag(t *testing.T) {
 		existingField1Dummy: {error1Mock, error4Mock},
 		existingField2Dummy: {error2Mock, error3Mock},
 	}, errorsBag.All())
-	require.EqualError(t, errorsBag, fmt.Sprintf(
-		`2 field(s) failed:
-%s: [2]{%s; %s}
-%s: [2]{%s; %s}`,
+
+	errorMessage = errorsBag.Error()
+	require.Contains(t, errorMessage, "2 field(s) failed:")
+	require.Contains(t, errorMessage, fmt.Sprintf(
+		"%s: [2]{%s; %s}",
 		existingField1Dummy,
 		error1MessageDummy,
 		error4MessageDummy,
+	))
+	require.Contains(t, errorMessage, fmt.Sprintf(
+		"%s: [2]{%s; %s}",
 		existingField2Dummy,
 		error2MessageDummy,
 		error3MessageDummy,

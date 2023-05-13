@@ -16,3 +16,10 @@ bench-stats:
 # Compare benchmarks
 bench-compare:
 	@benchstat "${OLD}.bench.log" "${NEW}.bench.log"
+
+# Run all linters
+lint: lint-cs
+
+# Validates code style
+lint-cs:
+	@golangci-lint run --max-same-issues=10 ./...

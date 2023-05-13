@@ -92,9 +92,14 @@ func (r *maxRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 
 	default:
 		switch valueOf := reflect.ValueOf(v); valueOf.Kind() {
-		case reflect.Slice, reflect.Array:
+		case reflect.Slice:
 			if CompareNumbers(valueOf.Len(), r.max) == 1 {
 				return value, NewMaxValidationError(ve.SubtypeSlice, r.max)
+			}
+
+		case reflect.Array:
+			if CompareNumbers(valueOf.Len(), r.max) == 1 {
+				return value, NewMaxValidationError(ve.SubtypeArray, r.max)
 			}
 
 		case reflect.Map:
