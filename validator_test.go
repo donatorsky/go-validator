@@ -20,7 +20,7 @@ import (
 
 var fakerInstance = faker.New()
 
-func TestForMap(t *testing.T) {
+func Test_ForMap(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -95,7 +95,7 @@ func TestForMap(t *testing.T) {
 	require.True(t, assertErrorsBagContainsErrorsForField(t, errorsBag, []ve.ValidationError{vr.NewRequiredValidationError()}, "slice.foo"))
 }
 
-func TestForMapWithContext(t *testing.T) {
+func Test_ForMapWithContext(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -175,7 +175,7 @@ type someRequest struct {
 	Slice []int `validation:"slice"`
 }
 
-func TestForStruct(t *testing.T) {
+func Test_ForStruct(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -250,7 +250,7 @@ func TestForStruct(t *testing.T) {
 	require.True(t, assertErrorsBagContainsErrorsForField(t, errorsBag, []ve.ValidationError{vr.NewRequiredValidationError()}, "slice.foo"))
 }
 
-func TestForStruct_FailsWhenInvalidDataProvided(t *testing.T) {
+func Test_ForStruct_FailsWhenInvalidDataProvided(t *testing.T) {
 	// when
 	_, err := ForStruct(1, nil)
 
@@ -258,7 +258,7 @@ func TestForStruct_FailsWhenInvalidDataProvided(t *testing.T) {
 	require.ErrorIs(t, err, ErrNotStructType)
 }
 
-func TestForStructWithContext(t *testing.T) {
+func Test_ForStructWithContext(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -333,7 +333,7 @@ func TestForStructWithContext(t *testing.T) {
 	require.True(t, assertErrorsBagContainsErrorsForField(t, errorsBag, []ve.ValidationError{vr.NewRequiredValidationError()}, "slice.foo"))
 }
 
-func TestForStructWithContext_FailsWhenInvalidDataProvided(t *testing.T) {
+func Test_ForStructWithContext_FailsWhenInvalidDataProvided(t *testing.T) {
 	// when
 	_, err := ForStructWithContext(context.TODO(), 1, nil)
 
@@ -341,7 +341,7 @@ func TestForStructWithContext_FailsWhenInvalidDataProvided(t *testing.T) {
 	require.ErrorIs(t, err, ErrNotStructType)
 }
 
-func TestForSlice(t *testing.T) {
+func Test_ForSlice(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -368,7 +368,7 @@ func TestForSlice(t *testing.T) {
 	require.True(t, assertErrorsBagContainsErrorsForField(t, sliceElementsValidationErrorsBag, validationErrors["2"], "_.2"))
 }
 
-func TestForSlice_FailsWhenInvalidDataProvided(t *testing.T) {
+func Test_ForSlice_FailsWhenInvalidDataProvided(t *testing.T) {
 	// when
 	_, err := ForSlice(1)
 
@@ -376,7 +376,7 @@ func TestForSlice_FailsWhenInvalidDataProvided(t *testing.T) {
 	require.ErrorIs(t, err, ErrNotListType)
 }
 
-func TestForSliceWithContext(t *testing.T) {
+func Test_ForSliceWithContext(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -403,7 +403,7 @@ func TestForSliceWithContext(t *testing.T) {
 	require.True(t, assertErrorsBagContainsErrorsForField(t, sliceElementsValidationErrorsBag, validationErrors["2"], "_.2"))
 }
 
-func TestForSliceWithContext_FailsWhenInvalidDataProvided(t *testing.T) {
+func Test_ForSliceWithContext_FailsWhenInvalidDataProvided(t *testing.T) {
 	// when
 	_, err := ForSliceWithContext(context.TODO(), 1)
 
@@ -411,7 +411,7 @@ func TestForSliceWithContext_FailsWhenInvalidDataProvided(t *testing.T) {
 	require.ErrorIs(t, err, ErrNotListType)
 }
 
-func TestForValue(t *testing.T) {
+func Test_ForValue(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -432,7 +432,7 @@ func TestForValue(t *testing.T) {
 	require.Equal(t, valueValidationErrorsBag.Get("*"), validationErrors)
 }
 
-func TestForValueWithContext(t *testing.T) {
+func Test_ForValueWithContext(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 

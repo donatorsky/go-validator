@@ -15,7 +15,7 @@ func BenchmarkWhenFuncRule(b *testing.B) {
 	runRuleBenchmarks(b, whenFuncRuleDataProvider)
 }
 
-func TestWhenFunc_Rules(t *testing.T) {
+func Test_WhenFunc_Rules(t *testing.T) {
 	// given
 	var stringDummy = fakerInstance.Lorem().Sentence(6)
 

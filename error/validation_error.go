@@ -1,3 +1,5 @@
+//go:generate mockgen -destination=validation_error_gomock_test.go -package=error -source ./validation_error.go ValidationError
+
 package error
 
 type ValidationError interface {

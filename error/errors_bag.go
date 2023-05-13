@@ -5,11 +5,11 @@ import (
 	"strings"
 )
 
+type ErrorsBag map[string][]ValidationError
+
 func NewErrorsBag() ErrorsBag {
 	return make(ErrorsBag)
 }
-
-type ErrorsBag map[string][]ValidationError
 
 func (b ErrorsBag) Add(field string, errors ...ValidationError) {
 	if _, exists := b[field]; !exists {
@@ -50,7 +50,7 @@ func (b ErrorsBag) Error() string {
 			messages[idx] = validationError.Error()
 		}
 
-		message += fmt.Sprintf("\n%s: [%d]%s", field, len(errors), strings.Join(messages, "; "))
+		message += fmt.Sprintf("\n%s: [%d]{%s}", field, len(errors), strings.Join(messages, "; "))
 	}
 
 	return message
