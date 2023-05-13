@@ -773,6 +773,42 @@ Checks whether a value is of `time.Time` type, its pointer or valid date string 
 
 No.
 
+### `DoesntEndWith(suffix string, suffixes ...string)`
+
+Checks whether a value is a string not ending with any of provided suffixes.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string does not end with any of provided suffixes (case-sensitive).
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `DoesntStartWith(prefix string, prefixes ...string)`
+
+Checks whether a value is a string not starting with any of provided prefixes.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string does not start with any of provided prefixes (case-sensitive).
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
 ### `Duration()`
 
 Checks whether a value is of `time.Duration` type, its pointer or valid duration string.
@@ -824,6 +860,42 @@ Yes. Unlike the `Email()` rule, it returns the email address of the string. E.g.
 
 No.
 
+### `EndsWith(suffix string)`
+
+Checks whether a value is a string ending with one of provided suffixes.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string ends with one of provided suffixes (case-sensitive).
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Filled()`
+
+Checks whether a value is not empty when it is present.
+
+**Applies to:**
+
+- `nil`: passes.
+- `*any`: passes.
+- `!nil`: checks if value is not a zero value.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
 ### `Float[Out floatType]()`
 
 Checks and ensures that a value is of `Out` type or its pointer.
@@ -852,6 +924,7 @@ Checks whether a value exists in `values`.
 **Applies to:**
 
 Any value. Passes only when a value exists in `values`, optionally using custom `comparator`.
+When auto dereference is enabled (and it is by default), `nil` value will pass validation.
 
 **Modifies output:**
 
@@ -876,6 +949,23 @@ No.
 **Bails:**
 
 Yes, when a value is not of `Out` type or its pointer.
+
+### `IP()`
+
+Checks whether a value is a string in IP v4 or v6 format.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if a value is in IP v4 or v6 format according to the `net.ParseIP` function.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
 
 ### `Length[T integerType](length T)`
 
@@ -917,10 +1007,31 @@ Checks whether a value is at most `max`.
 
 **Applies to:**
 
+- `nil`: passes.
 - `numberType`: checks if a value is at most `max` .
 - `string`: checks if string's length is at most `max` characters.
 - `slice`, `array`: checks if slice/array has at most `max` elements.
 - `map`: checks if map has at most `max` keys.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `MaxExclusive[T numberType](max T)`
+
+Checks whether a value is less than `max`.
+
+**Applies to:**
+
+- `nil`: passes.
+- `numberType`: checks if a value is less than `max` .
+- `string`: checks if string's length is less than `max` characters.
+- `slice`, `array`: checks if slice/array has less than `max` elements.
+- `map`: checks if map has less than `max` keys.
 
 **Modifies output:**
 
@@ -936,10 +1047,110 @@ Checks whether a value is at least `min`.
 
 **Applies to:**
 
+- `nil`: passes.
 - `numberType`: checks if a value is at least `min`.
 - `string`: checks if string's length is at least `min` characters.
 - `slice`, `array`: checks if slice/array has at least `min` elements.
 - `map`: checks if map has at least `min` keys.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `MinExclusive[T numberType](min T)`
+
+Checks whether a value is greater than `min`.
+
+**Applies to:**
+
+- `nil`: passes.
+- `numberType`: checks if a value is greater than `min`.
+- `string`: checks if string's length is more than `min` characters.
+- `slice`, `array`: checks if slice/array has more than `min` elements.
+- `map`: checks if map has more than `min` keys.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `NotIn[T comparable](values []T, options ...notInRuleOption)`
+
+Checks whether a value does not exist in `values`.
+
+**Options:**
+
+- `InRuleWithComparator(comparator Comparator)`: sets custom elements comparator. `comparator` receives an input value and each element of `values`, one at a time.
+- `InRuleWithoutAutoDereference()`: disables automatic dereference of a value, i.e. `values` will be compared against the exact input value which may be a pointer.
+
+**Applies to:**
+
+Any value. Passes only when a value does not exist in `values`, optionally using custom `comparator`.
+When auto dereference is enabled (and it is by default), `nil` value will pass validation.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `NotRegex(regex *regexp.Regexp)`
+
+Checks whether a value does not match `regex` expression.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string does not match `regex` expression.
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Numeric()`
+
+Checks whether a value is a numeric value or a string that can be converted to one.
+
+**Applies to:**
+
+- `nil`: passes.
+- `numberType`, `complex64`, `complex128`: passes.
+- `string`: passes only when a value can be converted to number using `strconv.ParseInt`, `strconv.ParseUint`, `strconv.ParseFloat` and `strconv.ParseComplex`, in that order.
+- `any`: fails.
+
+**Modifies output:**
+
+- `nil`: unchanged value.
+- `numberType`, `complex64`, `complex128`: unchanged value.
+- `string`: value converted to number.
+
+**Bails:**
+
+No.
+
+### `Regex(regex *regexp.Regexp)`
+
+Checks whether a value matches `regex` expression.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string matches `regex` expression.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -996,6 +1207,24 @@ Yes. Returns `nil` slice of `[]Out` type for `nil` values. Returns input value o
 **Bails:**
 
 Yes, when a value is not of `[]Out` type or its pointer.
+
+### `StartsWith(prefix string, prefixes ...string)`
+
+Checks whether a value is a string starting with one of provided prefixes.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string starts with one of provided prefixes (case-sensitive).
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
 
 ### `String()`
 

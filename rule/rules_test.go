@@ -68,12 +68,12 @@ func Test_Dereference(t *testing.T) {
 		// slice
 		{
 			in:    ([]int)(nil),
-			out:   nil,
+			out:   ([]int)(nil),
 			isNil: true,
 		},
 		{
 			in:    ptr(([]int)(nil)),
-			out:   nil,
+			out:   ([]int)(nil),
 			isNil: true,
 		},
 		{
@@ -112,12 +112,12 @@ func Test_Dereference(t *testing.T) {
 		// map
 		{
 			in:    (map[any]any)(nil),
-			out:   nil,
+			out:   (map[any]any)(nil),
 			isNil: true,
 		},
 		{
 			in:    ptr((map[any]any)(nil)),
-			out:   nil,
+			out:   (map[any]any)(nil),
 			isNil: true,
 		},
 		{

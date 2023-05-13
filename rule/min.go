@@ -10,12 +10,14 @@ import (
 
 func Min[T numberType](min T) *minRule[T] {
 	return &minRule[T]{
-		min: min,
+		min:       min,
+		inclusive: true,
 	}
 }
 
 type minRule[T numberType] struct {
-	min T
+	min       T
+	inclusive bool
 }
 
 func (r *minRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
@@ -26,85 +28,85 @@ func (r *minRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 
 	switch v := v.(type) {
 	case string:
-		if CompareNumbers(len(v), r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeString, r.min)
+		if !isMin(len(v), r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeString, r.min, r.inclusive)
 		}
 
 	case int:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case int8:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case int16:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case int32:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case int64:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case uint:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case uint8:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case uint16:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case uint32:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case uint64:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case float32:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	case float64:
-		if CompareNumbers(v, r.min) == -1 {
-			return value, NewMinValidationError(ve.SubtypeNumber, r.min)
+		if !isMin(v, r.min, r.inclusive) {
+			return value, NewMinValidationError(ve.SubtypeNumber, r.min, r.inclusive)
 		}
 
 	default:
 		switch valueOf := reflect.ValueOf(v); valueOf.Kind() {
 		case reflect.Slice:
-			if CompareNumbers(valueOf.Len(), r.min) == -1 {
-				return value, NewMinValidationError(ve.SubtypeSlice, r.min)
+			if !isMin(valueOf.Len(), r.min, r.inclusive) {
+				return value, NewMinValidationError(ve.SubtypeSlice, r.min, r.inclusive)
 			}
 
 		case reflect.Array:
-			if CompareNumbers(valueOf.Len(), r.min) == -1 {
-				return value, NewMinValidationError(ve.SubtypeArray, r.min)
+			if !isMin(valueOf.Len(), r.min, r.inclusive) {
+				return value, NewMinValidationError(ve.SubtypeArray, r.min, r.inclusive)
 			}
 
 		case reflect.Map:
-			if CompareNumbers(valueOf.Len(), r.min) == -1 {
-				return value, NewMinValidationError(ve.SubtypeMap, r.min)
+			if !isMin(valueOf.Len(), r.min, r.inclusive) {
+				return value, NewMinValidationError(ve.SubtypeMap, r.min, r.inclusive)
 			}
 		}
 	}
@@ -112,32 +114,56 @@ func (r *minRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 	return value, nil
 }
 
-func NewMinValidationError[T numberType](st string, threshold T) MinValidationError[T] {
+func isMin[V, T numberType](v V, min T, inclusive bool) bool {
+	if inclusive {
+		// v >= min
+		return CompareNumbers(v, min) != -1
+	}
+
+	// v > min
+	return CompareNumbers(v, min) == 1
+}
+
+func NewMinValidationError[T numberType](st string, threshold T, inclusive bool) MinValidationError[T] {
 	return MinValidationError[T]{
 		BasicValidationError: ve.BasicValidationError{
 			Rule: fmt.Sprintf("%s.%s", ve.TypeMin, st),
 		},
 		Threshold: threshold,
+		Inclusive: inclusive,
 	}
 }
 
 type MinValidationError[T numberType] struct {
 	ve.BasicValidationError
 
-	Threshold T `json:"threshold"`
+	Threshold T    `json:"threshold"`
+	Inclusive bool `json:"inclusive"`
 }
 
 func (e MinValidationError[T]) Error() string {
 	switch e.Rule {
 	case ve.TypeMin + "." + ve.SubtypeString:
-		return fmt.Sprintf("must be at least %v characters", e.Threshold)
+		if e.Inclusive {
+			return fmt.Sprintf("must be at least %v characters", e.Threshold)
+		} else {
+			return fmt.Sprintf("must be more than %v characters", e.Threshold)
+		}
 
 	case ve.TypeMin + "." + ve.SubtypeSlice,
 		ve.TypeMin + "." + ve.SubtypeArray,
 		ve.TypeMin + "." + ve.SubtypeMap:
-		return fmt.Sprintf("must have at least %v items", e.Threshold)
+		if e.Inclusive {
+			return fmt.Sprintf("must have at least %v items", e.Threshold)
+		} else {
+			return fmt.Sprintf("must have more than %v items", e.Threshold)
+		}
 
 	default:
-		return fmt.Sprintf("must be at least %v", e.Threshold)
+		if e.Inclusive {
+			return fmt.Sprintf("must be at least %v", e.Threshold)
+		} else {
+			return fmt.Sprintf("must be greater than %v", e.Threshold)
+		}
 	}
 }

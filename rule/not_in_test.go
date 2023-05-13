@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test_InRule(t *testing.T) {
+func Test_NotInRule(t *testing.T) {
 	// given
-	for ttName, tt := range inRuleDataProvider() {
+	for ttName, tt := range notInRuleDataProvider() {
 		t.Run(ttName, func(t *testing.T) {
 			// when
 			newValue, err := tt.rule.Apply(context.Background(), tt.value, tt.data)
@@ -27,22 +27,22 @@ func Test_InRule(t *testing.T) {
 	}
 }
 
-func Test_InValidationError(t *testing.T) {
+func Test_NotInValidationError(t *testing.T) {
 	// given
 	var valuesDummy = []any{1, "2", true}
 
 	// when
-	err := NewInValidationError(valuesDummy)
+	err := NewNotInValidationError(valuesDummy)
 
 	// then
-	require.EqualError(t, err, fmt.Sprintf("does not exist in %v", valuesDummy))
+	require.EqualError(t, err, fmt.Sprintf("exists in %v", valuesDummy))
 }
 
-func BenchmarkInRule(b *testing.B) {
-	runRuleBenchmarks(b, inRuleDataProvider)
+func BenchmarkNotInRule(b *testing.B) {
+	runRuleBenchmarks(b, notInRuleDataProvider)
 }
 
-func inRuleDataProvider() map[string]*ruleTestCaseData {
+func notInRuleDataProvider() map[string]*ruleTestCaseData {
 	var (
 		intDummy              = fakerInstance.IntBetween(-1000, 1000)
 		intValuesDummy        = []int{intDummy, intDummy + 1}
@@ -51,22 +51,22 @@ func inRuleDataProvider() map[string]*ruleTestCaseData {
 
 	return map[string]*ruleTestCaseData{
 		"nil": {
-			rule:             In(intValuesDummy),
+			rule:             NotIn(intValuesDummy),
 			value:            nil,
 			expectedNewValue: nil,
 			expectedError:    nil,
 		},
 		"nil, without auto dereference": {
-			rule:             In(intValuesDummy, InRuleWithoutAutoDereference()),
+			rule:             NotIn(intValuesDummy, NotInRuleWithoutAutoDereference()),
 			value:            nil,
 			expectedNewValue: nil,
-			expectedError:    NewInValidationError(intValuesDummy),
+			expectedError:    nil,
 		},
 		"nil with custom validator allowing it": {
-			rule: In(
+			rule: NotIn(
 				intValuesDummy,
-				InRuleWithoutAutoDereference(),
-				InRuleWithComparator(func(value, expectedValue any) bool {
+				NotInRuleWithoutAutoDereference(),
+				NotInRuleWithComparator(func(value, expectedValue any) bool {
 					if value == nil {
 						return true
 					}
@@ -76,76 +76,76 @@ func inRuleDataProvider() map[string]*ruleTestCaseData {
 			),
 			value:            nil,
 			expectedNewValue: nil,
-			expectedError:    nil,
+			expectedError:    NewNotInValidationError(intValuesDummy),
 		},
 		"existing int in empty slice": {
-			rule:             In([]int{}),
-			value:            intDummy,
-			expectedNewValue: intDummy,
-			expectedError:    NewInValidationError([]int{}),
-		},
-		"existing int in slice of ints": {
-			rule:             In(intValuesDummy),
+			rule:             NotIn([]int{}),
 			value:            intDummy,
 			expectedNewValue: intDummy,
 			expectedError:    nil,
 		},
-		"existing int in slice of int pointers": {
-			rule:             In(intPointerValuesDummy),
+		"existing int in slice of ints": {
+			rule:             NotIn(intValuesDummy),
 			value:            intDummy,
 			expectedNewValue: intDummy,
-			expectedError:    NewInValidationError(intPointerValuesDummy),
+			expectedError:    NewNotInValidationError(intValuesDummy),
+		},
+		"existing int in slice of int pointers": {
+			rule:             NotIn(intPointerValuesDummy),
+			value:            intDummy,
+			expectedNewValue: intDummy,
+			expectedError:    nil,
 		},
 		"existing int in slice of ints with custom comparator": {
-			rule: In(intValuesDummy, InRuleWithComparator(func(value, expectedValue any) bool {
+			rule: NotIn(intValuesDummy, NotInRuleWithComparator(func(value, expectedValue any) bool {
 				return value == expectedValue
 			})),
 			value:            intDummy,
 			expectedNewValue: intDummy,
-			expectedError:    nil,
+			expectedError:    NewNotInValidationError(intValuesDummy),
 		},
 		"non-existing int in slice of ints": {
-			rule:             In(intValuesDummy),
+			rule:             NotIn(intValuesDummy),
 			value:            intDummy - 1,
 			expectedNewValue: intDummy - 1,
-			expectedError:    NewInValidationError(intValuesDummy),
+			expectedError:    nil,
 		},
 		"string in slice of ints": {
-			rule:             In(intValuesDummy),
+			rule:             NotIn(intValuesDummy),
 			value:            "not an integer",
 			expectedNewValue: "not an integer",
-			expectedError:    NewInValidationError(intValuesDummy),
+			expectedError:    nil,
 		},
 
 		"existing int pointer in slice of ints": {
-			rule:             In(intValuesDummy),
+			rule:             NotIn(intValuesDummy),
 			value:            &intDummy,
 			expectedNewValue: &intDummy,
-			expectedError:    nil,
+			expectedError:    NewNotInValidationError(intValuesDummy),
 		},
 		"existing int pointer in slice int pointers": {
-			rule:             In(intPointerValuesDummy),
-			value:            &intDummy,
-			expectedNewValue: &intDummy,
-			expectedError:    NewInValidationError(intPointerValuesDummy),
-		},
-		"existing int pointer in slice int pointers, without auto dereference": {
-			rule:             In(intPointerValuesDummy, InRuleWithoutAutoDereference()),
+			rule:             NotIn(intPointerValuesDummy),
 			value:            &intDummy,
 			expectedNewValue: &intDummy,
 			expectedError:    nil,
 		},
-		"existing int pointer in slice of ints, without auto dereference": {
-			rule:             In(intValuesDummy, InRuleWithoutAutoDereference()),
+		"existing int pointer in slice int pointers, without auto dereference": {
+			rule:             NotIn(intPointerValuesDummy, NotInRuleWithoutAutoDereference()),
 			value:            &intDummy,
 			expectedNewValue: &intDummy,
-			expectedError:    NewInValidationError(intValuesDummy),
+			expectedError:    NewNotInValidationError(intPointerValuesDummy),
+		},
+		"existing int pointer in slice of ints, without auto dereference": {
+			rule:             NotIn(intValuesDummy, NotInRuleWithoutAutoDereference()),
+			value:            &intDummy,
+			expectedNewValue: &intDummy,
+			expectedError:    nil,
 		},
 		"non-existing int pointer in slice of ints": {
-			rule:             In(intValuesDummy),
+			rule:             NotIn(intValuesDummy),
 			value:            ptr(intDummy - 1),
 			expectedNewValue: ptr(intDummy - 1),
-			expectedError:    NewInValidationError(intValuesDummy),
+			expectedError:    nil,
 		},
 	}
 }

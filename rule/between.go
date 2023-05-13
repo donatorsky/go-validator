@@ -30,84 +30,84 @@ func (r *betweenRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Val
 
 	switch v := v.(type) {
 	case string:
-		if isBetween(len(v), r.min, r.max, r.inclusive) {
+		if !isBetween(len(v), r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeString, r.min, r.max, r.inclusive)
 		}
 
 	case int:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case int8:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case int16:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case int32:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case int64:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case uint:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case uint8:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case uint16:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case uint32:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case uint64:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case float32:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	case float64:
-		if isBetween(v, r.min, r.max, r.inclusive) {
+		if !isBetween(v, r.min, r.max, r.inclusive) {
 			return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeNumber, r.min, r.max, r.inclusive)
 		}
 
 	default:
 		switch valueOf := reflect.ValueOf(v); valueOf.Kind() {
 		case reflect.Slice:
-			if isBetween(valueOf.Len(), r.min, r.max, r.inclusive) {
+			if !isBetween(valueOf.Len(), r.min, r.max, r.inclusive) {
 				return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeSlice, r.min, r.max, r.inclusive)
 			}
 
 		case reflect.Array:
-			if isBetween(valueOf.Len(), r.min, r.max, r.inclusive) {
+			if !isBetween(valueOf.Len(), r.min, r.max, r.inclusive) {
 				return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeArray, r.min, r.max, r.inclusive)
 			}
 
 		case reflect.Map:
-			if isBetween(valueOf.Len(), r.min, r.max, r.inclusive) {
+			if !isBetween(valueOf.Len(), r.min, r.max, r.inclusive) {
 				return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeMap, r.min, r.max, r.inclusive)
 			}
 		}
@@ -118,10 +118,12 @@ func (r *betweenRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Val
 
 func isBetween[V, T numberType](v V, min, max T, inclusive bool) bool {
 	if inclusive {
-		return CompareNumbers(v, min) == -1 || CompareNumbers(v, max) == 1
+		// v >= min && v <= max
+		return CompareNumbers(v, min) != -1 && CompareNumbers(v, max) != 1
 	}
 
-	return CompareNumbers(v, min) < 1 || CompareNumbers(v, max) > -1
+	// v > min && v < max
+	return CompareNumbers(v, min) == 1 && CompareNumbers(v, max) == -1
 }
 
 func NewBetweenValidationError[T numberType](t, st string, min, max T, inclusive bool) BetweenValidationError[T] {

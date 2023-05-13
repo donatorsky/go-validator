@@ -23,6 +23,7 @@ type ruleTestCaseData struct {
 	expectedNewValue     any
 	expectedNewValueFunc func(value any) bool
 	expectedError        ve.ValidationError
+	expectedErrorFunc    func(t *testing.T, err ve.ValidationError) bool
 	expectedToBail       bool
 }
 
@@ -40,10 +41,15 @@ func runRuleTestCases(t *testing.T, dataProvider ruleTestCaseDataProvider) {
 			newValue, err := tt.rule.Apply(context.Background(), tt.value, tt.data)
 
 			// then
-			if tt.expectedError == nil {
-				require.NoError(t, err, "Rule is expected to not return error")
-			} else {
+			switch {
+			case tt.expectedErrorFunc != nil:
+				require.True(t, tt.expectedErrorFunc(t, err), "Rule returned unexpected error")
+
+			case tt.expectedError != nil:
 				require.ErrorIs(t, tt.expectedError, err, "Rule returned unexpected error")
+
+			default:
+				require.NoError(t, err, "Rule is expected to not return error")
 			}
 
 			if tt.expectedNewValueFunc == nil {
