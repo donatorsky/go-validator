@@ -96,9 +96,14 @@ func (r *betweenRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Val
 
 	default:
 		switch valueOf := reflect.ValueOf(v); valueOf.Kind() {
-		case reflect.Slice, reflect.Array:
+		case reflect.Slice:
 			if isBetween(valueOf.Len(), r.min, r.max, r.inclusive) {
 				return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeSlice, r.min, r.max, r.inclusive)
+			}
+
+		case reflect.Array:
+			if isBetween(valueOf.Len(), r.min, r.max, r.inclusive) {
+				return value, NewBetweenValidationError(ve.TypeBetween, ve.SubtypeArray, r.min, r.max, r.inclusive)
 			}
 
 		case reflect.Map:
@@ -151,6 +156,7 @@ func (e BetweenValidationError[T]) Error() string {
 		return fmt.Sprintf("must be between %v and %v characters (%s)", e.Min, e.Max, mode)
 
 	case ve.TypeBetween + "." + ve.SubtypeSlice,
+		ve.TypeBetween + "." + ve.SubtypeArray,
 		ve.TypeBetween + "." + ve.SubtypeMap:
 		return fmt.Sprintf("must have between %v and %v items (%s)", e.Min, e.Max, mode)
 

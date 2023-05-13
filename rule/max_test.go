@@ -273,7 +273,7 @@ func maxRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             Max(3),
 			value:            [4]int{1, 2, 3, 4},
 			expectedNewValue: [4]int{1, 2, 3, 4},
-			expectedError:    NewMaxValidationError(ve.SubtypeSlice, 3),
+			expectedError:    NewMaxValidationError(ve.SubtypeArray, 3),
 		},
 
 		"map with 3 keys": {

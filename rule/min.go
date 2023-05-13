@@ -92,9 +92,14 @@ func (r *minRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 
 	default:
 		switch valueOf := reflect.ValueOf(v); valueOf.Kind() {
-		case reflect.Slice, reflect.Array:
+		case reflect.Slice:
 			if CompareNumbers(valueOf.Len(), r.min) == -1 {
 				return value, NewMinValidationError(ve.SubtypeSlice, r.min)
+			}
+
+		case reflect.Array:
+			if CompareNumbers(valueOf.Len(), r.min) == -1 {
+				return value, NewMinValidationError(ve.SubtypeArray, r.min)
 			}
 
 		case reflect.Map:

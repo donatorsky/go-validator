@@ -513,7 +513,7 @@ func betweenRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             Between(2, 4),
 			value:            [1]int{1},
 			expectedNewValue: [1]int{1},
-			expectedError:    NewBetweenValidationError(ve.TypeBetween, ve.SubtypeSlice, 2, 4, true),
+			expectedError:    NewBetweenValidationError(ve.TypeBetween, ve.SubtypeArray, 2, 4, true),
 		},
 		"array with 2 items": {
 			rule:             Between(2, 4),
@@ -537,7 +537,7 @@ func betweenRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             Between(2, 4),
 			value:            [5]int{1, 2, 3, 4, 5},
 			expectedNewValue: [5]int{1, 2, 3, 4, 5},
-			expectedError:    NewBetweenValidationError(ve.TypeBetween, ve.SubtypeSlice, 2, 4, true),
+			expectedError:    NewBetweenValidationError(ve.TypeBetween, ve.SubtypeArray, 2, 4, true),
 		},
 
 		"map with 1 key": {

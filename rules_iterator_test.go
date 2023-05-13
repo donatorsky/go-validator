@@ -41,7 +41,7 @@ func Test_rulesIterator_CanIterate(t *testing.T) {
 			for i.Valid() {
 				rules = append(rules, i.Current())
 
-				i.Next(nil, nil, nil)
+				i.Next(context.TODO(), nil, nil)
 			}
 
 			// then
@@ -60,7 +60,7 @@ func Test_rulesIterator_ReturnsNilForEmptyIterator(t *testing.T) {
 	require.Equal(t, 0, i.index)
 
 	// when
-	i.Next(nil, nil, nil)
+	i.Next(context.TODO(), nil, nil)
 
 	// then
 	require.Nil(t, i.Current())

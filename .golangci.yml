@@ -1,0 +1,62 @@
+# See: https://golangci-lint.run/
+# See: https://staticcheck.io/docs/checks (for gosimple and staticcheck)
+linters:
+  disable-all: true
+  enable:
+    - asasalint
+    - asciicheck
+    - durationcheck
+    - goconst
+    - gocritic
+    - gofmt
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - makezero
+    - nlreturn
+    - predeclared
+    - reassign
+    - revive
+    - staticcheck
+    - typecheck
+    - unconvert
+    - unparam
+    - usestdlibvars
+    - whitespace
+
+issues:
+  fix: false
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec
+    - path: error\/.*\.go
+      linters:
+        - predeclared
+    - path: test_test\.go
+      linters:
+        - gocritic
+
+linters-settings:
+  goimports:
+    local-prefixes: github.com/donatorsky/go-validator
+
+  gosec:
+    severity: "medium"
+    confidence: "medium"
+
+  gosimple:
+    checks:
+      - "all"
+
+  revive:
+    rules:
+      # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md#unexported-return
+      - name: unexported-return
+        disabled: true
+
+  staticcheck:
+    checks:
+      - "all"
