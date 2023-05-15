@@ -34,6 +34,7 @@ const (
 	TypeStartsWith      = "STARTS_WITH"
 	TypeString          = "STRING"
 	TypeStruct          = "STRUCT"
+	TypeUrl             = "URL"
 )
 
 const (

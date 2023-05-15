@@ -1258,6 +1258,24 @@ No.
 
 Yes, when a value is not of struct type.
 
+### `URL()`
+
+Checks whether a value is a valid URL string.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string is a valid URL according to `net/url.ParseRequestURI` function.
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
 ## Custom validation
 
 You can write a custom validator to cover custom needs. There are to ways of doing it: by implementing `rule.Rule` interface or by using `rule.Custom` rule.
