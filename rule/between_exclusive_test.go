@@ -20,43 +20,43 @@ func Test_BetweenValidationError_Exclusive(t *testing.T) {
 		expectedMessage string
 	}{
 		{
-			error:           NewBetweenValidationError(ve.SubtypeString, 5, 6, false),
+			error:           NewBetweenValidationError(ve.TypeString, 5, 6, false),
 			expectedMessage: "must be between 5 and 6 characters (exclusive)",
 		},
 		{
-			error:           NewBetweenValidationError(ve.SubtypeString, 5.1, 6.9, false),
+			error:           NewBetweenValidationError(ve.TypeString, 5.1, 6.9, false),
 			expectedMessage: "must be between 5.1 and 6.9 characters (exclusive)",
 		},
 
 		{
-			error:           NewBetweenValidationError(ve.SubtypeSlice, 5, 6, false),
+			error:           NewBetweenValidationError(ve.TypeSlice, 5, 6, false),
 			expectedMessage: "must have between 5 and 6 items (exclusive)",
 		},
 		{
-			error:           NewBetweenValidationError(ve.SubtypeSlice, 5.1, 6.9, false),
+			error:           NewBetweenValidationError(ve.TypeSlice, 5.1, 6.9, false),
 			expectedMessage: "must have between 5.1 and 6.9 items (exclusive)",
 		},
 
 		{
-			error:           NewBetweenValidationError(ve.SubtypeMap, 5, 6, false),
+			error:           NewBetweenValidationError(ve.TypeMap, 5, 6, false),
 			expectedMessage: "must have between 5 and 6 items (exclusive)",
 		},
 		{
-			error:           NewBetweenValidationError(ve.SubtypeMap, 5.1, 6.9, false),
+			error:           NewBetweenValidationError(ve.TypeMap, 5.1, 6.9, false),
 			expectedMessage: "must have between 5.1 and 6.9 items (exclusive)",
 		},
 
 		{
-			error:           NewBetweenValidationError(ve.SubtypeNumber, 5, 6, false),
+			error:           NewBetweenValidationError(ve.TypeNumber, 5, 6, false),
 			expectedMessage: "must be between 5 and 6 (exclusive)",
 		},
 		{
-			error:           NewBetweenValidationError(ve.SubtypeNumber, 5.1, 6.9, false),
+			error:           NewBetweenValidationError(ve.TypeNumber, 5.1, 6.9, false),
 			expectedMessage: "must be between 5.1 and 6.9 (exclusive)",
 		},
 
 		{
-			error:           NewBetweenValidationError(ve.SubtypeInvalid, fakerInstance.Int(), fakerInstance.Int(), false),
+			error:           NewBetweenValidationError(ve.TypeInvalid, fakerInstance.Int(), fakerInstance.Int(), false),
 			expectedMessage: "between cannot be determined",
 		},
 	} {
@@ -84,7 +84,7 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            "ab",
 			expectedNewValue: "ab",
-			expectedError:    NewBetweenValidationError(ve.SubtypeString, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeString, 2, 4, false),
 		},
 		"string of length 3": {
 			rule:             BetweenExclusive(2, 4),
@@ -102,14 +102,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            "abcd",
 			expectedNewValue: "abcd",
-			expectedError:    NewBetweenValidationError(ve.SubtypeString, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeString, 2, 4, false),
 		},
 
 		"int(2)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            2,
 			expectedNewValue: 2,
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"int(3)": {
 			rule:             BetweenExclusive(2, 4),
@@ -127,14 +127,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            4,
 			expectedNewValue: 4,
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"int8(2)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            int8(2),
 			expectedNewValue: int8(2),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"int8(3)": {
 			rule:             BetweenExclusive(2, 4),
@@ -152,14 +152,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            int8(4),
 			expectedNewValue: int8(4),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"int16(2)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            int16(2),
 			expectedNewValue: int16(2),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"int16(3)": {
 			rule:             BetweenExclusive(2, 4),
@@ -177,14 +177,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            int16(4),
 			expectedNewValue: int16(4),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"int32(2)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            int32(2),
 			expectedNewValue: int32(2),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"int32(3)": {
 			rule:             BetweenExclusive(2, 4),
@@ -202,14 +202,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            int32(4),
 			expectedNewValue: int32(4),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"int64(2)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            int64(2),
 			expectedNewValue: int64(2),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"int64(3)": {
 			rule:             BetweenExclusive(2, 4),
@@ -227,14 +227,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            int64(4),
 			expectedNewValue: int64(4),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"uint(2)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            uint(2),
 			expectedNewValue: uint(2),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"uint(3)": {
 			rule:             BetweenExclusive(2, 4),
@@ -252,14 +252,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            uint(4),
 			expectedNewValue: uint(4),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"uint8(2)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            uint8(2),
 			expectedNewValue: uint8(2),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"uint8(3)": {
 			rule:             BetweenExclusive(2, 4),
@@ -277,14 +277,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            uint8(4),
 			expectedNewValue: uint8(4),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"uint16(2)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            uint16(2),
 			expectedNewValue: uint16(2),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"uint16(3)": {
 			rule:             BetweenExclusive(2, 4),
@@ -302,14 +302,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            uint16(4),
 			expectedNewValue: uint16(4),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"uint32(2)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            uint32(2),
 			expectedNewValue: uint32(2),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"uint32(3)": {
 			rule:             BetweenExclusive(2, 4),
@@ -327,14 +327,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            uint32(4),
 			expectedNewValue: uint32(4),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"uint64(2)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            uint64(2),
 			expectedNewValue: uint64(2),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"uint64(3)": {
 			rule:             BetweenExclusive(2, 4),
@@ -352,14 +352,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            uint64(4),
 			expectedNewValue: uint64(4),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"float32(2.0)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            float32(2.0),
 			expectedNewValue: float32(2.0),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"float32(2.01)": {
 			rule:             BetweenExclusive(2, 4),
@@ -383,14 +383,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            float32(4.0),
 			expectedNewValue: float32(4.0),
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"float64(2.0)": {
 			rule:             BetweenExclusive(2, 4),
 			value:            2.0,
 			expectedNewValue: 2.0,
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 		"float64(2.01)": {
 			rule:             BetweenExclusive(2, 4),
@@ -414,14 +414,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            4.0,
 			expectedNewValue: 4.0,
-			expectedError:    NewBetweenValidationError(ve.SubtypeNumber, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeNumber, 2, 4, false),
 		},
 
 		"slice with 2 items": {
 			rule:             BetweenExclusive(2, 4),
 			value:            []int{1, 2},
 			expectedNewValue: []int{1, 2},
-			expectedError:    NewBetweenValidationError(ve.SubtypeSlice, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeSlice, 2, 4, false),
 		},
 		"slice with 3 items": {
 			rule:             BetweenExclusive(2, 4),
@@ -439,14 +439,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            []int{1, 2, 3, 4},
 			expectedNewValue: []int{1, 2, 3, 4},
-			expectedError:    NewBetweenValidationError(ve.SubtypeSlice, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeSlice, 2, 4, false),
 		},
 
 		"array with 2 items": {
 			rule:             BetweenExclusive(2, 4),
 			value:            [2]int{1, 2},
 			expectedNewValue: [2]int{1, 2},
-			expectedError:    NewBetweenValidationError(ve.SubtypeArray, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeArray, 2, 4, false),
 		},
 		"array with 3 items": {
 			rule:             BetweenExclusive(2, 4),
@@ -464,14 +464,14 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            [4]int{1, 2, 3, 4},
 			expectedNewValue: [4]int{1, 2, 3, 4},
-			expectedError:    NewBetweenValidationError(ve.SubtypeArray, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeArray, 2, 4, false),
 		},
 
 		"map with 2 keys": {
 			rule:             BetweenExclusive(2, 4),
 			value:            map[any]int{1: 1, "a": 2},
 			expectedNewValue: map[any]int{1: 1, "a": 2},
-			expectedError:    NewBetweenValidationError(ve.SubtypeMap, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeMap, 2, 4, false),
 		},
 		"map with 3 keys": {
 			rule:             BetweenExclusive(2, 4),
@@ -489,7 +489,7 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            map[any]int{1: 1, "a": 2, 3.0: 3, true: 4},
 			expectedNewValue: map[any]int{1: 1, "a": 2, 3.0: 3, true: 4},
-			expectedError:    NewBetweenValidationError(ve.SubtypeMap, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeMap, 2, 4, false),
 		},
 
 		// unsupported values
@@ -497,19 +497,19 @@ func betweenExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             BetweenExclusive(2, 4),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
-			expectedError:    NewBetweenValidationError(ve.SubtypeInvalid, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeInvalid, 2, 4, false),
 		},
 		"bool": {
 			rule:             BetweenExclusive(2, 4),
 			value:            true,
 			expectedNewValue: true,
-			expectedError:    NewBetweenValidationError(ve.SubtypeInvalid, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeInvalid, 2, 4, false),
 		},
 		"struct": {
 			rule:             BetweenExclusive(2, 4),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},
-			expectedError:    NewBetweenValidationError(ve.SubtypeInvalid, 2, 4, false),
+			expectedError:    NewBetweenValidationError(ve.TypeInvalid, 2, 4, false),
 		},
 	}
 }

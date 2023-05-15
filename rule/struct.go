@@ -33,7 +33,7 @@ func (r *structRule) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 func NewStructValidationError() StructValidationError {
 	return StructValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeStruct,
+			Rule: ve.RuleStruct,
 		},
 	}
 }

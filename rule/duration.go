@@ -40,7 +40,7 @@ func (*durationRule) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 func NewDurationValidationError() DurationValidationError {
 	return DurationValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeDuration,
+			Rule: ve.RuleDuration,
 		},
 	}
 }

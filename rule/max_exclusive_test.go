@@ -20,52 +20,52 @@ func Test_MaxExclusiveValidationError(t *testing.T) {
 		expectedMessage string
 	}{
 		{
-			error:           NewMaxValidationError(ve.SubtypeString, 5, false),
+			error:           NewMaxValidationError(ve.TypeString, 5, false),
 			expectedMessage: "must be less than 5 characters",
 		},
 		{
-			error:           NewMaxValidationError(ve.SubtypeString, 5.1, false),
+			error:           NewMaxValidationError(ve.TypeString, 5.1, false),
 			expectedMessage: "must be less than 5.1 characters",
 		},
 
 		{
-			error:           NewMaxValidationError(ve.SubtypeSlice, 5, false),
+			error:           NewMaxValidationError(ve.TypeSlice, 5, false),
 			expectedMessage: "must have less than 5 items",
 		},
 		{
-			error:           NewMaxValidationError(ve.SubtypeSlice, 5.1, false),
+			error:           NewMaxValidationError(ve.TypeSlice, 5.1, false),
 			expectedMessage: "must have less than 5.1 items",
 		},
 
 		{
-			error:           NewMaxValidationError(ve.SubtypeArray, 5, false),
+			error:           NewMaxValidationError(ve.TypeArray, 5, false),
 			expectedMessage: "must have less than 5 items",
 		},
 		{
-			error:           NewMaxValidationError(ve.SubtypeArray, 5.1, false),
+			error:           NewMaxValidationError(ve.TypeArray, 5.1, false),
 			expectedMessage: "must have less than 5.1 items",
 		},
 
 		{
-			error:           NewMaxValidationError(ve.SubtypeMap, 5, false),
+			error:           NewMaxValidationError(ve.TypeMap, 5, false),
 			expectedMessage: "must have less than 5 items",
 		},
 		{
-			error:           NewMaxValidationError(ve.SubtypeMap, 5.1, false),
+			error:           NewMaxValidationError(ve.TypeMap, 5.1, false),
 			expectedMessage: "must have less than 5.1 items",
 		},
 
 		{
-			error:           NewMaxValidationError(ve.SubtypeNumber, 5, false),
+			error:           NewMaxValidationError(ve.TypeNumber, 5, false),
 			expectedMessage: "must be less than 5",
 		},
 		{
-			error:           NewMaxValidationError(ve.SubtypeNumber, 5.1, false),
+			error:           NewMaxValidationError(ve.TypeNumber, 5.1, false),
 			expectedMessage: "must be less than 5.1",
 		},
 
 		{
-			error:           NewMaxValidationError(ve.SubtypeInvalid, fakerInstance.Int(), false),
+			error:           NewMaxValidationError(ve.TypeInvalid, fakerInstance.Int(), false),
 			expectedMessage: "max cannot be determined",
 		},
 	} {
@@ -99,7 +99,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            "abc",
 			expectedNewValue: "abc",
-			expectedError:    NewMaxValidationError(ve.SubtypeString, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeString, 3, false),
 		},
 		"*string of length 2": {
 			rule:             MaxExclusive(3),
@@ -111,7 +111,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr("abc"),
 			expectedNewValue: ptr("abc"),
-			expectedError:    NewMaxValidationError(ve.SubtypeString, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeString, 3, false),
 		},
 
 		"int(2)": {
@@ -124,7 +124,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            3,
 			expectedNewValue: 3,
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*int(2)": {
 			rule:             MaxExclusive(3),
@@ -136,7 +136,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr(3),
 			expectedNewValue: ptr(3),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"int8(2)": {
@@ -149,7 +149,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            int8(3),
 			expectedNewValue: int8(3),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*int8(2)": {
 			rule:             MaxExclusive(3),
@@ -161,7 +161,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr(int8(3)),
 			expectedNewValue: ptr(int8(3)),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"int16(2)": {
@@ -174,7 +174,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            int16(3),
 			expectedNewValue: int16(3),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*int16(2)": {
 			rule:             MaxExclusive(3),
@@ -186,7 +186,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr(int16(3)),
 			expectedNewValue: ptr(int16(3)),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"int32(2)": {
@@ -199,7 +199,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            int32(3),
 			expectedNewValue: int32(3),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*int32(2)": {
 			rule:             MaxExclusive(3),
@@ -211,7 +211,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr(int32(3)),
 			expectedNewValue: ptr(int32(3)),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"int64(2)": {
@@ -224,7 +224,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            int64(3),
 			expectedNewValue: int64(3),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*int64(2)": {
 			rule:             MaxExclusive(3),
@@ -236,7 +236,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr(int64(3)),
 			expectedNewValue: ptr(int64(3)),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"uint(2)": {
@@ -249,7 +249,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            uint(3),
 			expectedNewValue: uint(3),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*uint(2)": {
 			rule:             MaxExclusive(3),
@@ -261,7 +261,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr(uint(3)),
 			expectedNewValue: ptr(uint(3)),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"uint8(2)": {
@@ -274,7 +274,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            uint8(3),
 			expectedNewValue: uint8(3),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*uint8(2)": {
 			rule:             MaxExclusive(3),
@@ -286,7 +286,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr(uint8(3)),
 			expectedNewValue: ptr(uint8(3)),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"uint16(2)": {
@@ -299,7 +299,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            uint16(3),
 			expectedNewValue: uint16(3),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*uint16(2)": {
 			rule:             MaxExclusive(3),
@@ -311,7 +311,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr(uint16(3)),
 			expectedNewValue: ptr(uint16(3)),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"uint32(2)": {
@@ -324,7 +324,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            uint32(3),
 			expectedNewValue: uint32(3),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*uint32(2)": {
 			rule:             MaxExclusive(3),
@@ -336,7 +336,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr(uint32(3)),
 			expectedNewValue: ptr(uint32(3)),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"uint64(2)": {
@@ -349,7 +349,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            uint64(3),
 			expectedNewValue: uint64(3),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*uint64(2)": {
 			rule:             MaxExclusive(3),
@@ -361,7 +361,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            ptr(uint64(3)),
 			expectedNewValue: ptr(uint64(3)),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"float32(3.0)": {
@@ -374,7 +374,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            float32(3.0),
 			expectedNewValue: float32(3.0),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*float32(3.0)": {
 			rule:             MaxExclusive(3),
@@ -386,7 +386,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            float32(3.0),
 			expectedNewValue: float32(3.0),
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"float64(3.0)": {
@@ -399,7 +399,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            3.0,
 			expectedNewValue: 3.0,
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 		"*float64(3.0)": {
 			rule:             MaxExclusive(3),
@@ -411,7 +411,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            3.0,
 			expectedNewValue: 3.0,
-			expectedError:    NewMaxValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeNumber, 3, false),
 		},
 
 		"slice with 2 items": {
@@ -424,7 +424,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            []int{1, 2, 3},
 			expectedNewValue: []int{1, 2, 3},
-			expectedError:    NewMaxValidationError(ve.SubtypeSlice, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeSlice, 3, false),
 		},
 
 		"array with 2 items": {
@@ -437,7 +437,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            [3]int{1, 2, 3},
 			expectedNewValue: [3]int{1, 2, 3},
-			expectedError:    NewMaxValidationError(ve.SubtypeArray, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeArray, 3, false),
 		},
 
 		"map with 2 keys": {
@@ -450,7 +450,7 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            map[any]int{1: 1, "a": 2, 3.0: 3},
 			expectedNewValue: map[any]int{1: 1, "a": 2, 3.0: 3},
-			expectedError:    NewMaxValidationError(ve.SubtypeMap, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeMap, 3, false),
 		},
 
 		// unsupported values
@@ -458,19 +458,19 @@ func maxExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MaxExclusive(3),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
-			expectedError:    NewMaxValidationError(ve.SubtypeInvalid, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeInvalid, 3, false),
 		},
 		"bool": {
 			rule:             MaxExclusive(3),
 			value:            true,
 			expectedNewValue: true,
-			expectedError:    NewMaxValidationError(ve.SubtypeInvalid, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeInvalid, 3, false),
 		},
 		"struct": {
 			rule:             MaxExclusive(3),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},
-			expectedError:    NewMaxValidationError(ve.SubtypeInvalid, 3, false),
+			expectedError:    NewMaxValidationError(ve.TypeInvalid, 3, false),
 		},
 	}
 }

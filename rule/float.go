@@ -36,7 +36,7 @@ func (r *floatRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.Val
 func NewFloatValidationError(expectedType, actualType string) FloatValidationError {
 	return FloatValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeInt,
+			Rule: ve.RuleFloat,
 		},
 		ExpectedType: expectedType,
 		ActualType:   actualType,

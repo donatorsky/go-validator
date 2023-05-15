@@ -33,7 +33,7 @@ func (r *notRegexRule) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 func NewNotRegexValidationError() NotRegexValidationError {
 	return NotRegexValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeNotRegex,
+			Rule: ve.RuleNotRegex,
 		},
 	}
 }

@@ -40,7 +40,7 @@ func (r customRule[In, Out]) Apply(ctx context.Context, value any, data any) (an
 func NewCustomValidationError(err error) CustomValidationError {
 	return CustomValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeCustom,
+			Rule: ve.RuleCustom,
 		},
 		Err: err.Error(),
 	}

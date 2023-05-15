@@ -39,7 +39,7 @@ func (r *arrayOfRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.V
 func NewArrayOfValidationError(expected, actual string) ArrayOfValidationError {
 	return ArrayOfValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeArrayOf,
+			Rule: ve.RuleArrayOf,
 		},
 		ExpectedType: expected,
 		ActualType:   actual,

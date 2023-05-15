@@ -36,7 +36,7 @@ func (*emailRule) Apply(_ context.Context, value any, _ any) (any, ve.Validation
 func NewEmailValidationError() EmailValidationError {
 	return EmailValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeEmail,
+			Rule: ve.RuleEmail,
 		},
 	}
 }

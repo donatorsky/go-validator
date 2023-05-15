@@ -80,7 +80,7 @@ func (r *notInRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 func NewNotInValidationError[T any](values []T) NotInValidationError[T] {
 	return NotInValidationError[T]{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeNotIn,
+			Rule: ve.RuleNotIn,
 		},
 		Values: values,
 	}

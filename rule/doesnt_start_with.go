@@ -46,7 +46,7 @@ func (r *doesntStartWithRule) Apply(_ context.Context, value any, _ any) (any, v
 func NewDoesntStartWithValidationError(prefixes []string) DoesntStartWithValidationError {
 	return DoesntStartWithValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeDoesntStartWith,
+			Rule: ve.RuleDoesntStartWith,
 		},
 		Prefixes: prefixes,
 	}

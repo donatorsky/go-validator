@@ -37,7 +37,7 @@ func (r beforeRule) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 func NewBeforeValidationError(before string) BeforeValidationError {
 	return BeforeValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeBefore,
+			Rule: ve.RuleBefore,
 		},
 		Before: before,
 	}

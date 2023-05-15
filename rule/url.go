@@ -35,7 +35,7 @@ func (*urlRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationEr
 func NewUrlValidationError() UrlValidationError {
 	return UrlValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeURL,
+			Rule: ve.RuleURL,
 		},
 	}
 }

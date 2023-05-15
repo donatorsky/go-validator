@@ -38,7 +38,7 @@ func (r *sliceOfRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.V
 func NewSliceOfValidationError(expected, actual string) SliceOfValidationError {
 	return SliceOfValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeSliceOf,
+			Rule: ve.RuleSliceOf,
 		},
 		ExpectedType: expected,
 		ActualType:   actual,

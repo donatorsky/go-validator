@@ -83,7 +83,7 @@ type customError struct {
 }
 
 func (c customError) GetRule() string {
-	return ve.TypeCustom
+	return ve.RuleCustom
 }
 
 func (c customError) Error() string {

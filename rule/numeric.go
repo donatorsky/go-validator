@@ -51,7 +51,7 @@ func (*numericRule) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 func NewNumericValidationError() NumericValidationError {
 	return NumericValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeNumeric,
+			Rule: ve.RuleNumeric,
 		},
 	}
 }

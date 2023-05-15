@@ -27,28 +27,28 @@ func (r *lengthRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Vali
 	switch v := v.(type) {
 	case string:
 		if CompareNumbers(len(v), r.length) != 0 {
-			return value, NewLengthValidationError(ve.SubtypeString, r.length)
+			return value, NewLengthValidationError(ve.TypeString, r.length)
 		}
 
 	default:
 		switch valueOf := reflect.ValueOf(v); valueOf.Kind() {
 		case reflect.Slice:
 			if CompareNumbers(valueOf.Len(), r.length) != 0 {
-				return value, NewLengthValidationError(ve.SubtypeSlice, r.length)
+				return value, NewLengthValidationError(ve.TypeSlice, r.length)
 			}
 
 		case reflect.Array:
 			if CompareNumbers(valueOf.Len(), r.length) != 0 {
-				return value, NewLengthValidationError(ve.SubtypeArray, r.length)
+				return value, NewLengthValidationError(ve.TypeArray, r.length)
 			}
 
 		case reflect.Map:
 			if CompareNumbers(valueOf.Len(), r.length) != 0 {
-				return value, NewLengthValidationError(ve.SubtypeMap, r.length)
+				return value, NewLengthValidationError(ve.TypeMap, r.length)
 			}
 
 		default:
-			return value, NewLengthValidationError(ve.SubtypeInvalid, r.length)
+			return value, NewLengthValidationError(ve.TypeInvalid, r.length)
 		}
 	}
 
@@ -58,7 +58,7 @@ func (r *lengthRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Vali
 func NewLengthValidationError[T integerType](st string, threshold T) LengthValidationError[T] {
 	return LengthValidationError[T]{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeLength,
+			Rule: ve.RuleLength,
 		},
 		Type:   st,
 		Length: threshold,
@@ -74,12 +74,12 @@ type LengthValidationError[T integerType] struct {
 
 func (e LengthValidationError[T]) Error() string {
 	switch e.Type {
-	case ve.SubtypeString:
+	case ve.TypeString:
 		return fmt.Sprintf("must be exactly %v characters long", e.Length)
 
-	case ve.SubtypeSlice,
-		ve.SubtypeArray,
-		ve.SubtypeMap:
+	case ve.TypeSlice,
+		ve.TypeArray,
+		ve.TypeMap:
 		return fmt.Sprintf("must have exactly %v items", e.Length)
 
 	default:
