@@ -9,12 +9,12 @@ import (
 
 func NotRegex(regex *regexp.Regexp) *notRegexRule {
 	return &notRegexRule{
-		notRegex: regex,
+		regex: regex,
 	}
 }
 
 type notRegexRule struct {
-	notRegex *regexp.Regexp
+	regex *regexp.Regexp
 }
 
 func (r *notRegexRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
@@ -23,7 +23,7 @@ func (r *notRegexRule) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 		return value, nil
 	}
 
-	if newValue, ok := v.(string); !ok || r.notRegex.MatchString(newValue) {
+	if stringValue, ok := v.(string); !ok || r.regex.MatchString(stringValue) {
 		return value, NewNotRegexValidationError()
 	}
 

@@ -57,12 +57,12 @@ func (r *notInRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 	}
 
 	if r.options.comparator == nil {
-		newValue, ok := newValue.(T)
+		comparableValue, ok := newValue.(T)
 		if !ok {
 			return value, nil
 		}
 
-		_, exists := r.valuesMap[newValue]
+		_, exists := r.valuesMap[comparableValue]
 		if exists {
 			return value, NewNotInValidationError(r.values)
 		}
