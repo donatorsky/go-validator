@@ -171,6 +171,6 @@ func (e BetweenValidationError[T]) Error() string {
 		return fmt.Sprintf("must have between %v and %v items (%s)", e.Min, e.Max, mode)
 
 	default:
-		return "cannot be determined"
+		return "between cannot be determined"
 	}
 }

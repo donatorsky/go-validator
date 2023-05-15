@@ -66,7 +66,7 @@ func Test_MinExclusiveValidationError(t *testing.T) {
 
 		{
 			error:           NewMinValidationError(ve.SubtypeInvalid, fakerInstance.Int(), false),
-			expectedMessage: "cannot be determined",
+			expectedMessage: "min cannot be determined",
 		},
 	} {
 		t.Run(fmt.Sprintf("#%d", ttIdx), func(t *testing.T) {

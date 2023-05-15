@@ -57,7 +57,7 @@ func Test_BetweenValidationError_Exclusive(t *testing.T) {
 
 		{
 			error:           NewBetweenValidationError(ve.SubtypeInvalid, fakerInstance.Int(), fakerInstance.Int(), false),
-			expectedMessage: "cannot be determined",
+			expectedMessage: "between cannot be determined",
 		},
 	} {
 		t.Run(fmt.Sprintf("#%d", ttIdx), func(t *testing.T) {

@@ -172,6 +172,6 @@ func (e MinValidationError[T]) Error() string {
 		}
 
 	default:
-		return "cannot be determined"
+		return "min cannot be determined"
 	}
 }

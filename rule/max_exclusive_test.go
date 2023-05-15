@@ -66,7 +66,7 @@ func Test_MaxExclusiveValidationError(t *testing.T) {
 
 		{
 			error:           NewMaxValidationError(ve.SubtypeInvalid, fakerInstance.Int(), false),
-			expectedMessage: "cannot be determined",
+			expectedMessage: "max cannot be determined",
 		},
 	} {
 		t.Run(fmt.Sprintf("#%d", ttIdx), func(t *testing.T) {

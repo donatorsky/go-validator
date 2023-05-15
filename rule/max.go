@@ -172,6 +172,6 @@ func (e MaxValidationError[T]) Error() string {
 		}
 
 	default:
-		return "cannot be determined"
+		return "max cannot be determined"
 	}
 }
