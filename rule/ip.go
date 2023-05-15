@@ -30,7 +30,7 @@ func (*ipRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationErr
 func NewIpValidationError() IpValidationError {
 	return IpValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeIP,
+			Rule: ve.RuleIP,
 		},
 	}
 }

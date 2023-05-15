@@ -32,7 +32,7 @@ func (r *stringRule) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 func NewStringValidationError() StringValidationError {
 	return StringValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeString,
+			Rule: ve.RuleString,
 		},
 	}
 }

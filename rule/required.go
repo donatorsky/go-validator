@@ -33,7 +33,7 @@ func (r *requiredRule) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 func NewRequiredValidationError() RequiredValidationError {
 	return RequiredValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeRequired,
+			Rule: ve.RuleRequired,
 		},
 	}
 }

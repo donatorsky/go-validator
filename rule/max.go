@@ -29,88 +29,88 @@ func (r *maxRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 	switch v := v.(type) {
 	case string:
 		if !isMax(len(v), r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeString, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeString, r.max, r.inclusive)
 		}
 
 	case int:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case int8:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case int16:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case int32:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case int64:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case uint:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case uint8:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case uint16:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case uint32:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case uint64:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case float32:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	case float64:
 		if !isMax(v, r.max, r.inclusive) {
-			return value, NewMaxValidationError(ve.SubtypeNumber, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeNumber, r.max, r.inclusive)
 		}
 
 	default:
 		switch valueOf := reflect.ValueOf(v); valueOf.Kind() {
 		case reflect.Slice:
 			if !isMax(valueOf.Len(), r.max, r.inclusive) {
-				return value, NewMaxValidationError(ve.SubtypeSlice, r.max, r.inclusive)
+				return value, NewMaxValidationError(ve.TypeSlice, r.max, r.inclusive)
 			}
 
 		case reflect.Array:
 			if !isMax(valueOf.Len(), r.max, r.inclusive) {
-				return value, NewMaxValidationError(ve.SubtypeArray, r.max, r.inclusive)
+				return value, NewMaxValidationError(ve.TypeArray, r.max, r.inclusive)
 			}
 
 		case reflect.Map:
 			if !isMax(valueOf.Len(), r.max, r.inclusive) {
-				return value, NewMaxValidationError(ve.SubtypeMap, r.max, r.inclusive)
+				return value, NewMaxValidationError(ve.TypeMap, r.max, r.inclusive)
 			}
 
 		default:
-			return value, NewMaxValidationError(ve.SubtypeInvalid, r.max, r.inclusive)
+			return value, NewMaxValidationError(ve.TypeInvalid, r.max, r.inclusive)
 		}
 	}
 
@@ -130,7 +130,7 @@ func isMax[V, T numberType](v V, min T, inclusive bool) bool {
 func NewMaxValidationError[T numberType](st string, threshold T, inclusive bool) MaxValidationError[T] {
 	return MaxValidationError[T]{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeMax,
+			Rule: ve.RuleMax,
 		},
 		Type:      st,
 		Threshold: threshold,
@@ -148,23 +148,23 @@ type MaxValidationError[T numberType] struct {
 
 func (e MaxValidationError[T]) Error() string {
 	switch e.Type {
-	case ve.SubtypeNumber:
+	case ve.TypeNumber:
 		if e.Inclusive {
 			return fmt.Sprintf("must be at most %v", e.Threshold)
 		} else {
 			return fmt.Sprintf("must be less than %v", e.Threshold)
 		}
 
-	case ve.SubtypeString:
+	case ve.TypeString:
 		if e.Inclusive {
 			return fmt.Sprintf("must be at most %v characters", e.Threshold)
 		} else {
 			return fmt.Sprintf("must be less than %v characters", e.Threshold)
 		}
 
-	case ve.SubtypeSlice,
-		ve.SubtypeArray,
-		ve.SubtypeMap:
+	case ve.TypeSlice,
+		ve.TypeArray,
+		ve.TypeMap:
 		if e.Inclusive {
 			return fmt.Sprintf("must have at most %v items", e.Threshold)
 		} else {

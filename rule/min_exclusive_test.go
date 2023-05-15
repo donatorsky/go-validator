@@ -20,52 +20,52 @@ func Test_MinExclusiveValidationError(t *testing.T) {
 		expectedMessage string
 	}{
 		{
-			error:           NewMinValidationError(ve.SubtypeString, 5, false),
+			error:           NewMinValidationError(ve.TypeString, 5, false),
 			expectedMessage: "must be more than 5 characters",
 		},
 		{
-			error:           NewMinValidationError(ve.SubtypeString, 5.1, false),
+			error:           NewMinValidationError(ve.TypeString, 5.1, false),
 			expectedMessage: "must be more than 5.1 characters",
 		},
 
 		{
-			error:           NewMinValidationError(ve.SubtypeSlice, 5, false),
+			error:           NewMinValidationError(ve.TypeSlice, 5, false),
 			expectedMessage: "must have more than 5 items",
 		},
 		{
-			error:           NewMinValidationError(ve.SubtypeSlice, 5.1, false),
+			error:           NewMinValidationError(ve.TypeSlice, 5.1, false),
 			expectedMessage: "must have more than 5.1 items",
 		},
 
 		{
-			error:           NewMinValidationError(ve.SubtypeArray, 5, false),
+			error:           NewMinValidationError(ve.TypeArray, 5, false),
 			expectedMessage: "must have more than 5 items",
 		},
 		{
-			error:           NewMinValidationError(ve.SubtypeArray, 5.1, false),
+			error:           NewMinValidationError(ve.TypeArray, 5.1, false),
 			expectedMessage: "must have more than 5.1 items",
 		},
 
 		{
-			error:           NewMinValidationError(ve.SubtypeMap, 5, false),
+			error:           NewMinValidationError(ve.TypeMap, 5, false),
 			expectedMessage: "must have more than 5 items",
 		},
 		{
-			error:           NewMinValidationError(ve.SubtypeMap, 5.1, false),
+			error:           NewMinValidationError(ve.TypeMap, 5.1, false),
 			expectedMessage: "must have more than 5.1 items",
 		},
 
 		{
-			error:           NewMinValidationError(ve.SubtypeNumber, 5, false),
+			error:           NewMinValidationError(ve.TypeNumber, 5, false),
 			expectedMessage: "must be greater than 5",
 		},
 		{
-			error:           NewMinValidationError(ve.SubtypeNumber, 5.1, false),
+			error:           NewMinValidationError(ve.TypeNumber, 5.1, false),
 			expectedMessage: "must be greater than 5.1",
 		},
 
 		{
-			error:           NewMinValidationError(ve.SubtypeInvalid, fakerInstance.Int(), false),
+			error:           NewMinValidationError(ve.TypeInvalid, fakerInstance.Int(), false),
 			expectedMessage: "min cannot be determined",
 		},
 	} {
@@ -93,7 +93,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            "abc",
 			expectedNewValue: "abc",
-			expectedError:    NewMinValidationError(ve.SubtypeString, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeString, 3, false),
 		},
 		"string of length 4": {
 			rule:             MinExclusive(3),
@@ -105,7 +105,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr("abc"),
 			expectedNewValue: ptr("abc"),
-			expectedError:    NewMinValidationError(ve.SubtypeString, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeString, 3, false),
 		},
 		"*string of length 4": {
 			rule:             MinExclusive(3),
@@ -118,7 +118,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            3,
 			expectedNewValue: 3,
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"int(4)": {
 			rule:             MinExclusive(3),
@@ -130,7 +130,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(3),
 			expectedNewValue: ptr(3),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*int(4)": {
 			rule:             MinExclusive(3),
@@ -143,7 +143,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            int8(3),
 			expectedNewValue: int8(3),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"int8(4)": {
 			rule:             MinExclusive(3),
@@ -155,7 +155,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(int8(3)),
 			expectedNewValue: ptr(int8(3)),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*int8(4)": {
 			rule:             MinExclusive(3),
@@ -168,7 +168,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            int16(3),
 			expectedNewValue: int16(3),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"int16(4)": {
 			rule:             MinExclusive(3),
@@ -180,7 +180,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(int16(3)),
 			expectedNewValue: ptr(int16(3)),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*int16(4)": {
 			rule:             MinExclusive(3),
@@ -193,7 +193,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            int32(3),
 			expectedNewValue: int32(3),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"int32(4)": {
 			rule:             MinExclusive(3),
@@ -205,7 +205,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(int32(3)),
 			expectedNewValue: ptr(int32(3)),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*int32(4)": {
 			rule:             MinExclusive(3),
@@ -218,7 +218,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            int64(3),
 			expectedNewValue: int64(3),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"int64(4)": {
 			rule:             MinExclusive(3),
@@ -230,7 +230,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(int64(3)),
 			expectedNewValue: ptr(int64(3)),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*int64(4)": {
 			rule:             MinExclusive(3),
@@ -243,7 +243,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            uint(3),
 			expectedNewValue: uint(3),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"uint(4)": {
 			rule:             MinExclusive(3),
@@ -255,7 +255,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(uint(3)),
 			expectedNewValue: ptr(uint(3)),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*uint(4)": {
 			rule:             MinExclusive(3),
@@ -268,7 +268,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            uint8(3),
 			expectedNewValue: uint8(3),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"uint8(4)": {
 			rule:             MinExclusive(3),
@@ -280,7 +280,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(uint8(3)),
 			expectedNewValue: ptr(uint8(3)),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*uint8(4)": {
 			rule:             MinExclusive(3),
@@ -293,7 +293,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            uint16(3),
 			expectedNewValue: uint16(3),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"uint16(4)": {
 			rule:             MinExclusive(3),
@@ -305,7 +305,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(uint16(3)),
 			expectedNewValue: ptr(uint16(3)),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*uint16(4)": {
 			rule:             MinExclusive(3),
@@ -318,7 +318,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            uint32(3),
 			expectedNewValue: uint32(3),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"uint32(4)": {
 			rule:             MinExclusive(3),
@@ -330,7 +330,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(uint32(3)),
 			expectedNewValue: ptr(uint32(3)),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*uint32(4)": {
 			rule:             MinExclusive(3),
@@ -343,7 +343,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            uint64(3),
 			expectedNewValue: uint64(3),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"uint64(4)": {
 			rule:             MinExclusive(3),
@@ -355,7 +355,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(uint64(3)),
 			expectedNewValue: ptr(uint64(3)),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*uint64(4)": {
 			rule:             MinExclusive(3),
@@ -368,7 +368,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            float32(3.0),
 			expectedNewValue: float32(3.0),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"float32(3.01)": {
 			rule:             MinExclusive(3),
@@ -380,7 +380,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(float32(3.0)),
 			expectedNewValue: ptr(float32(3.0)),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*float32(3.01)": {
 			rule:             MinExclusive(3),
@@ -393,7 +393,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            3.0,
 			expectedNewValue: 3.0,
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"float64(3.01)": {
 			rule:             MinExclusive(3),
@@ -405,7 +405,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            ptr(3.0),
 			expectedNewValue: ptr(3.0),
-			expectedError:    NewMinValidationError(ve.SubtypeNumber, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeNumber, 3, false),
 		},
 		"*float64(3.01)": {
 			rule:             MinExclusive(3),
@@ -418,7 +418,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            []int{1, 2, 3},
 			expectedNewValue: []int{1, 2, 3},
-			expectedError:    NewMinValidationError(ve.SubtypeSlice, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeSlice, 3, false),
 		},
 		"slice with 4 items": {
 			rule:             MinExclusive(3),
@@ -431,7 +431,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            [3]int{1, 2, 3},
 			expectedNewValue: [3]int{1, 2, 3},
-			expectedError:    NewMinValidationError(ve.SubtypeArray, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeArray, 3, false),
 		},
 		"array with 4 items": {
 			rule:             MinExclusive(3),
@@ -444,7 +444,7 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            map[any]int{1: 1, "a": 2, 3.0: 3},
 			expectedNewValue: map[any]int{1: 1, "a": 2, 3.0: 3},
-			expectedError:    NewMinValidationError(ve.SubtypeMap, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeMap, 3, false),
 		},
 		"map with 4 keys": {
 			rule:             MinExclusive(3),
@@ -458,19 +458,19 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
-			expectedError:    NewMinValidationError(ve.SubtypeInvalid, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeInvalid, 3, false),
 		},
 		"bool": {
 			rule:             MinExclusive(3),
 			value:            true,
 			expectedNewValue: true,
-			expectedError:    NewMinValidationError(ve.SubtypeInvalid, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeInvalid, 3, false),
 		},
 		"struct": {
 			rule:             MinExclusive(3),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},
-			expectedError:    NewMinValidationError(ve.SubtypeInvalid, 3, false),
+			expectedError:    NewMinValidationError(ve.TypeInvalid, 3, false),
 		},
 	}
 }

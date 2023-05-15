@@ -153,7 +153,7 @@ func (r *booleanRule) Apply(_ context.Context, value any, _ any) (any, ve.Valida
 func NewBooleanValidationError() BooleanValidationError {
 	return BooleanValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeBoolean,
+			Rule: ve.RuleBoolean,
 		},
 	}
 }

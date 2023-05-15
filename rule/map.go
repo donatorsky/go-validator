@@ -33,7 +33,7 @@ func (r *mapRule) Apply(_ context.Context, value any, _ any) (any, ve.Validation
 func NewMapValidationError() MapValidationError {
 	return MapValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeMap,
+			Rule: ve.RuleMap,
 		},
 	}
 }

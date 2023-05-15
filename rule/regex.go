@@ -33,7 +33,7 @@ func (r *regexRule) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 func NewRegexValidationError() RegexValidationError {
 	return RegexValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeRegex,
+			Rule: ve.RuleRegex,
 		},
 	}
 }

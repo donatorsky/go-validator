@@ -37,7 +37,7 @@ func (r *filledRule) Apply(ctx context.Context, value any, data any) (any, ve.Va
 func NewFilledValidationError() FilledValidationError {
 	return FilledValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeFilled,
+			Rule: ve.RuleFilled,
 		},
 	}
 }

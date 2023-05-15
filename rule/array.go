@@ -33,7 +33,7 @@ func (r *arrayRule) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 func NewArrayValidationError() ArrayValidationError {
 	return ArrayValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeArray,
+			Rule: ve.RuleArray,
 		},
 	}
 }

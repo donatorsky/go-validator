@@ -38,7 +38,7 @@ func (r beforeOrEqualRule) Apply(_ context.Context, value any, _ any) (any, ve.V
 func NewBeforeOrEqualValidationError(beforeOrEqual string) BeforeOrEqualValidationError {
 	return BeforeOrEqualValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeBeforeOrEqual,
+			Rule: ve.RuleBeforeOrEqual,
 		},
 		BeforeOrEqual: beforeOrEqual,
 	}

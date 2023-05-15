@@ -70,7 +70,7 @@ func (r *uuidRule) Apply(_ context.Context, value any, _ any) (any, ve.Validatio
 func NewUuidValidationError() UuidValidationError {
 	return UuidValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeUUID,
+			Rule: ve.RuleUUID,
 		},
 	}
 }

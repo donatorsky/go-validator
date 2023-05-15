@@ -33,7 +33,7 @@ func (r *sliceRule) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 func NewSliceValidationError() SliceValidationError {
 	return SliceValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeSlice,
+			Rule: ve.RuleSlice,
 		},
 	}
 }

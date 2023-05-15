@@ -44,7 +44,7 @@ func (r dateFormatRule) Apply(_ context.Context, value any, _ any) (any, ve.Vali
 func NewDateFormatValidationError(format string) DateFormatValidationError {
 	return DateFormatValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeDateFormat,
+			Rule: ve.RuleDateFormat,
 		},
 		Format: format,
 	}

@@ -80,7 +80,7 @@ func (r *inRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 func NewInValidationError[T any](values []T) InValidationError[T] {
 	return InValidationError[T]{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeIn,
+			Rule: ve.RuleIn,
 		},
 		Values: values,
 	}

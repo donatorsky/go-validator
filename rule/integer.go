@@ -36,7 +36,7 @@ func (r *integerRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.V
 func NewIntegerValidationError(expectedType, actualType string) IntegerValidationError {
 	return IntegerValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeInt,
+			Rule: ve.RuleInt,
 		},
 		ExpectedType: expectedType,
 		ActualType:   actualType,

@@ -37,7 +37,7 @@ func (r afterRule) Apply(_ context.Context, value any, _ any) (any, ve.Validatio
 func NewAfterValidationError(after string) AfterValidationError {
 	return AfterValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeAfter,
+			Rule: ve.RuleAfter,
 		},
 		After: after,
 	}

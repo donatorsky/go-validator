@@ -46,7 +46,7 @@ func (r *doesntEndWithRule) Apply(_ context.Context, value any, _ any) (any, ve.
 func NewDoesntEndWithValidationError(suffixes []string) DoesntEndWithValidationError {
 	return DoesntEndWithValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeDoesntEndWith,
+			Rule: ve.RuleDoesntEndWith,
 		},
 		Suffixes: suffixes,
 	}
