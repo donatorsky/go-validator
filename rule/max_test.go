@@ -63,6 +63,11 @@ func Test_MaxValidationError(t *testing.T) {
 			error:           NewMaxValidationError(ve.SubtypeNumber, 5.1, true),
 			expectedMessage: "must be at most 5.1",
 		},
+
+		{
+			error:           NewMaxValidationError(ve.SubtypeInvalid, fakerInstance.Int(), true),
+			expectedMessage: "cannot be determined",
+		},
 	} {
 		t.Run(fmt.Sprintf("#%d", ttIdx), func(t *testing.T) {
 			// then
@@ -453,19 +458,19 @@ func maxRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             Max(3),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
-			expectedError:    nil,
+			expectedError:    NewMaxValidationError(ve.SubtypeInvalid, 3, true),
 		},
 		"bool": {
 			rule:             Max(3),
 			value:            true,
 			expectedNewValue: true,
-			expectedError:    nil,
+			expectedError:    NewMaxValidationError(ve.SubtypeInvalid, 3, true),
 		},
 		"struct": {
 			rule:             Max(3),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},
-			expectedError:    nil,
+			expectedError:    NewMaxValidationError(ve.SubtypeInvalid, 3, true),
 		},
 	}
 }

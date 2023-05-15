@@ -23,12 +23,7 @@ func (r *notRegexRule) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 		return value, nil
 	}
 
-	newValue, ok := v.(string)
-	if !ok {
-		return value, NewNotRegexValidationError()
-	}
-
-	if r.notRegex.MatchString(newValue) {
+	if newValue, ok := v.(string); !ok || r.notRegex.MatchString(newValue) {
 		return value, NewNotRegexValidationError()
 	}
 

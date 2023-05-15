@@ -10,20 +10,19 @@ import (
 type inRuleOption func(options *inRuleOptions)
 
 func In[T comparable](values []T, options ...inRuleOption) *inRule[T] {
-	opts := &inRuleOptions{
+	opts := inRuleOptions{
 		comparator:      nil,
 		autoDereference: true,
 	}
 
 	for _, option := range options {
-		option(opts)
+		option(&opts)
 	}
 
 	r := inRule[T]{
-		values:          values,
-		valuesMap:       nil,
-		comparator:      opts.comparator,
-		autoDereference: opts.autoDereference,
+		values:    values,
+		valuesMap: nil,
+		options:   opts,
 	}
 
 	if opts.comparator == nil {
@@ -40,14 +39,13 @@ func In[T comparable](values []T, options ...inRuleOption) *inRule[T] {
 type inRule[T comparable] struct {
 	values             []T
 	valuesMap          map[T]any
-	comparator         Comparator
-	autoDereference    bool
 	customErrorMessage *string
+	options            inRuleOptions
 }
 
 func (r *inRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
 	var newValue any
-	if r.autoDereference {
+	if r.options.autoDereference {
 		var isNil bool
 		newValue, isNil = Dereference(value)
 
@@ -58,7 +56,7 @@ func (r *inRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 		newValue = value
 	}
 
-	if r.comparator == nil {
+	if r.options.comparator == nil {
 		newValue, ok := newValue.(T)
 		if !ok {
 			return value, NewInValidationError(r.values)
@@ -70,7 +68,7 @@ func (r *inRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 		}
 	} else {
 		for _, v := range r.values {
-			if r.comparator(newValue, v) {
+			if r.options.comparator(newValue, v) {
 				return value, nil
 			}
 		}

@@ -35,6 +35,10 @@ func Test_LengthValidationError(t *testing.T) {
 			error:           NewLengthValidationError(ve.SubtypeMap, 5),
 			expectedMessage: "must have exactly 5 items",
 		},
+		{
+			error:           NewLengthValidationError(ve.SubtypeInvalid, fakerInstance.Int()),
+			expectedMessage: "length cannot be determined",
+		},
 	} {
 		t.Run(fmt.Sprintf("#%d", ttIdx), func(t *testing.T) {
 			// then
@@ -137,31 +141,31 @@ func lengthRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             Length(3),
 			value:            1,
 			expectedNewValue: 1,
-			expectedError:    nil,
+			expectedError:    NewLengthValidationError(ve.SubtypeInvalid, 3),
 		},
 		"float": {
 			rule:             Length(3),
 			value:            1.0,
 			expectedNewValue: 1.0,
-			expectedError:    nil,
+			expectedError:    NewLengthValidationError(ve.SubtypeInvalid, 3),
 		},
 		"complex": {
 			rule:             Length(3),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
-			expectedError:    nil,
+			expectedError:    NewLengthValidationError(ve.SubtypeInvalid, 3),
 		},
 		"bool": {
 			rule:             Length(3),
 			value:            true,
 			expectedNewValue: true,
-			expectedError:    nil,
+			expectedError:    NewLengthValidationError(ve.SubtypeInvalid, 3),
 		},
 		"struct": {
 			rule:             Length(3),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},
-			expectedError:    nil,
+			expectedError:    NewLengthValidationError(ve.SubtypeInvalid, 3),
 		},
 	}
 }

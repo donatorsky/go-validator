@@ -23,12 +23,7 @@ func (r *regexRule) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 		return value, nil
 	}
 
-	newValue, ok := v.(string)
-	if !ok {
-		return value, NewRegexValidationError()
-	}
-
-	if !r.regex.MatchString(newValue) {
+	if newValue, ok := v.(string); !ok || !r.regex.MatchString(newValue) {
 		return value, NewRegexValidationError()
 	}
 

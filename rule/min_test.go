@@ -63,6 +63,11 @@ func Test_MinValidationError(t *testing.T) {
 			error:           NewMinValidationError(ve.SubtypeNumber, 5.1, true),
 			expectedMessage: "must be at least 5.1",
 		},
+
+		{
+			error:           NewMinValidationError(ve.SubtypeInvalid, fakerInstance.Int(), true),
+			expectedMessage: "cannot be determined",
+		},
 	} {
 		t.Run(fmt.Sprintf("#%d", ttIdx), func(t *testing.T) {
 			// then
@@ -453,19 +458,19 @@ func minRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             Min(3),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
-			expectedError:    nil,
+			expectedError:    NewMinValidationError(ve.SubtypeInvalid, 3, true),
 		},
 		"bool": {
 			rule:             Min(3),
 			value:            true,
 			expectedNewValue: true,
-			expectedError:    nil,
+			expectedError:    NewMinValidationError(ve.SubtypeInvalid, 3, true),
 		},
 		"struct": {
 			rule:             Min(3),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},
-			expectedError:    nil,
+			expectedError:    NewMinValidationError(ve.SubtypeInvalid, 3, true),
 		},
 	}
 }

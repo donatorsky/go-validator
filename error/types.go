@@ -39,9 +39,10 @@ const (
 )
 
 const (
-	SubtypeArray  = "ARRAY"
-	SubtypeMap    = "MAP"
-	SubtypeNumber = "NUMBER"
-	SubtypeSlice  = "SLICE"
-	SubtypeString = "STRING"
+	SubtypeInvalid = "INVALID"
+	SubtypeArray   = "ARRAY"
+	SubtypeMap     = "MAP"
+	SubtypeNumber  = "NUMBER"
+	SubtypeSlice   = "SLICE"
+	SubtypeString  = "STRING"
 )

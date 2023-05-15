@@ -29,7 +29,7 @@ func filledRuleDataProvider() map[string]*ruleTestCaseData {
 		floatZeroValueDummy   float64
 		floatValueDummy       float64 = fakerInstance.Float64(5, 1, 1000)
 		complexZeroValueDummy complex128
-		complexValueDummy     complex128 = 0 + 1i
+		complexValueDummy     complex128 = complex(fakerInstance.Float64(5, 1, 1000), fakerInstance.Float64(5, 1, 1000))
 		boolZeroValueDummy    bool
 		boolValueDummy        bool = true
 		stringZeroValueDummy  string

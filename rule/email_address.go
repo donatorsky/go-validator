@@ -20,12 +20,12 @@ func (*emailAddressRule) Apply(_ context.Context, value any, _ any) (any, ve.Val
 		return value, nil
 	}
 
-	newValue, ok := v.(string)
+	stringValue, ok := v.(string)
 	if !ok {
 		return value, NewEmailValidationError()
 	}
 
-	email, err := mail.ParseAddress(newValue)
+	email, err := mail.ParseAddress(stringValue)
 	if err != nil {
 		return value, NewEmailValidationError()
 	}

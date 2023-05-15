@@ -24,17 +24,7 @@ func (r *arrayOfRule[Out]) Apply(_ context.Context, value any, _ any) (any, ve.V
 
 	var el Out
 
-	typeOf := reflect.TypeOf(v)
-	if typeOf.Kind() != reflect.Array {
-		r.MarkBailed()
-
-		return nil, NewArrayOfValidationError(
-			fmt.Sprintf("%T", el),
-			fmt.Sprintf("%T", v),
-		)
-	}
-
-	if !typeOf.Elem().AssignableTo(reflect.TypeOf(el)) {
+	if typeOf := reflect.TypeOf(v); typeOf.Kind() != reflect.Array || !typeOf.Elem().AssignableTo(reflect.TypeOf(el)) {
 		r.MarkBailed()
 
 		return nil, NewArrayOfValidationError(

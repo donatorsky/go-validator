@@ -10,20 +10,19 @@ import (
 type notInRuleOption func(rule *notInRuleOptions)
 
 func NotIn[T comparable](values []T, options ...notInRuleOption) *notInRule[T] {
-	opts := &notInRuleOptions{
+	opts := notInRuleOptions{
 		comparator:      nil,
 		autoDereference: true,
 	}
 
 	for _, option := range options {
-		option(opts)
+		option(&opts)
 	}
 
 	r := notInRule[T]{
-		values:          values,
-		valuesMap:       nil,
-		comparator:      opts.comparator,
-		autoDereference: opts.autoDereference,
+		values:    values,
+		valuesMap: nil,
+		options:   opts,
 	}
 
 	if opts.comparator == nil {
@@ -40,14 +39,13 @@ func NotIn[T comparable](values []T, options ...notInRuleOption) *notInRule[T] {
 type notInRule[T comparable] struct {
 	values             []T
 	valuesMap          map[T]any
-	comparator         Comparator
-	autoDereference    bool
 	customErrorMessage *string
+	options            notInRuleOptions
 }
 
 func (r *notInRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
 	var newValue any
-	if r.autoDereference {
+	if r.options.autoDereference {
 		var isNil bool
 		newValue, isNil = Dereference(value)
 
@@ -58,7 +56,7 @@ func (r *notInRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 		newValue = value
 	}
 
-	if r.comparator == nil {
+	if r.options.comparator == nil {
 		newValue, ok := newValue.(T)
 		if !ok {
 			return value, nil
@@ -70,7 +68,7 @@ func (r *notInRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Valid
 		}
 	} else {
 		for _, v := range r.values {
-			if r.comparator(newValue, v) {
+			if r.options.comparator(newValue, v) {
 				return value, NewNotInValidationError(r.values)
 			}
 		}

@@ -20,12 +20,7 @@ func (*ipRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationErr
 		return value, nil
 	}
 
-	newValue, ok := v.(string)
-	if !ok {
-		return value, NewIpValidationError()
-	}
-
-	if net.ParseIP(newValue) == nil {
+	if stringValue, ok := v.(string); !ok || net.ParseIP(stringValue) == nil {
 		return value, NewIpValidationError()
 	}
 

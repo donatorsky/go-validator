@@ -63,6 +63,11 @@ func Test_MinExclusiveValidationError(t *testing.T) {
 			error:           NewMinValidationError(ve.SubtypeNumber, 5.1, false),
 			expectedMessage: "must be greater than 5.1",
 		},
+
+		{
+			error:           NewMinValidationError(ve.SubtypeInvalid, fakerInstance.Int(), false),
+			expectedMessage: "cannot be determined",
+		},
 	} {
 		t.Run(fmt.Sprintf("#%d", ttIdx), func(t *testing.T) {
 			// then
@@ -453,19 +458,19 @@ func minExclusiveRuleDataProvider() map[string]*ruleTestCaseData {
 			rule:             MinExclusive(3),
 			value:            1 + 2i,
 			expectedNewValue: 1 + 2i,
-			expectedError:    nil,
+			expectedError:    NewMinValidationError(ve.SubtypeInvalid, 3, false),
 		},
 		"bool": {
 			rule:             MinExclusive(3),
 			value:            true,
 			expectedNewValue: true,
-			expectedError:    nil,
+			expectedError:    NewMinValidationError(ve.SubtypeInvalid, 3, false),
 		},
 		"struct": {
 			rule:             MinExclusive(3),
 			value:            someStruct{},
 			expectedNewValue: someStruct{},
-			expectedError:    nil,
+			expectedError:    NewMinValidationError(ve.SubtypeInvalid, 3, false),
 		},
 	}
 }

@@ -108,6 +108,9 @@ func (r *minRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Validat
 			if !isMin(valueOf.Len(), r.min, r.inclusive) {
 				return value, NewMinValidationError(ve.SubtypeMap, r.min, r.inclusive)
 			}
+
+		default:
+			return value, NewMinValidationError(ve.SubtypeInvalid, r.min, r.inclusive)
 		}
 	}
 
@@ -127,8 +130,9 @@ func isMin[V, T numberType](v V, min T, inclusive bool) bool {
 func NewMinValidationError[T numberType](st string, threshold T, inclusive bool) MinValidationError[T] {
 	return MinValidationError[T]{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: fmt.Sprintf("%s.%s", ve.TypeMin, st),
+			Rule: ve.TypeMin,
 		},
+		Type:      st,
 		Threshold: threshold,
 		Inclusive: inclusive,
 	}
@@ -137,22 +141,30 @@ func NewMinValidationError[T numberType](st string, threshold T, inclusive bool)
 type MinValidationError[T numberType] struct {
 	ve.BasicValidationError
 
-	Threshold T    `json:"threshold"`
-	Inclusive bool `json:"inclusive"`
+	Type      string `json:"type"`
+	Threshold T      `json:"threshold"`
+	Inclusive bool   `json:"inclusive"`
 }
 
 func (e MinValidationError[T]) Error() string {
-	switch e.Rule {
-	case ve.TypeMin + "." + ve.SubtypeString:
+	switch e.Type {
+	case ve.SubtypeNumber:
+		if e.Inclusive {
+			return fmt.Sprintf("must be at least %v", e.Threshold)
+		} else {
+			return fmt.Sprintf("must be greater than %v", e.Threshold)
+		}
+
+	case ve.SubtypeString:
 		if e.Inclusive {
 			return fmt.Sprintf("must be at least %v characters", e.Threshold)
 		} else {
 			return fmt.Sprintf("must be more than %v characters", e.Threshold)
 		}
 
-	case ve.TypeMin + "." + ve.SubtypeSlice,
-		ve.TypeMin + "." + ve.SubtypeArray,
-		ve.TypeMin + "." + ve.SubtypeMap:
+	case ve.SubtypeSlice,
+		ve.SubtypeArray,
+		ve.SubtypeMap:
 		if e.Inclusive {
 			return fmt.Sprintf("must have at least %v items", e.Threshold)
 		} else {
@@ -160,10 +172,6 @@ func (e MinValidationError[T]) Error() string {
 		}
 
 	default:
-		if e.Inclusive {
-			return fmt.Sprintf("must be at least %v", e.Threshold)
-		} else {
-			return fmt.Sprintf("must be greater than %v", e.Threshold)
-		}
+		return "cannot be determined"
 	}
 }
