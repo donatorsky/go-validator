@@ -1276,6 +1276,32 @@ No.
 
 No.
 
+### `UUID(options ...uuidRuleOption)`
+
+Checks whether a value is a valid RFC 4122 (version 1, 3, 4 or 5) universally unique identifier (UUID).
+
+**Options:**
+
+- `UUIDRuleVersion1()`: allows for UUIDv1.
+- `UUIDRuleVersion3()`: allows for UUIDv3.
+- `UUIDRuleVersion4()`: allows for UUIDv4.
+- `UUIDRuleVersion5()`: allows for UUIDv5.
+- `UUIDRuleDisallowNilUUID()`: disallows for nil UUID, i.e. `00000000-0000-0000-0000-000000000000`.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string is a valid UUID.
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
 ## Custom validation
 
 You can write a custom validator to cover custom needs. There are to ways of doing it: by implementing `rule.Rule` interface or by using `rule.Custom` rule.

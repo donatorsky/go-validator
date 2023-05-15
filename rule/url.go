@@ -14,7 +14,7 @@ func URL() *urlRule {
 type urlRule struct {
 }
 
-func (r *urlRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
+func (*urlRule) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
 	v, isNil := Dereference(value)
 	if isNil {
 		return value, nil
@@ -35,7 +35,7 @@ func (r *urlRule) Apply(_ context.Context, value any, _ any) (any, ve.Validation
 func NewUrlValidationError() UrlValidationError {
 	return UrlValidationError{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeUrl,
+			Rule: ve.TypeURL,
 		},
 	}
 }

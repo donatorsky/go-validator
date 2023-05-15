@@ -7,7 +7,7 @@ import (
 	ve "github.com/donatorsky/go-validator/error"
 )
 
-type inRuleOption func(rule *inRuleOptions)
+type inRuleOption func(options *inRuleOptions)
 
 func In[T comparable](values []T, options ...inRuleOption) *inRule[T] {
 	opts := &inRuleOptions{
@@ -104,13 +104,13 @@ type inRuleOptions struct {
 }
 
 func InRuleWithComparator(comparator Comparator) inRuleOption {
-	return func(rule *inRuleOptions) {
-		rule.comparator = comparator
+	return func(options *inRuleOptions) {
+		options.comparator = comparator
 	}
 }
 
 func InRuleWithoutAutoDereference() inRuleOption {
-	return func(rule *inRuleOptions) {
-		rule.autoDereference = false
+	return func(options *inRuleOptions) {
+		options.autoDereference = false
 	}
 }

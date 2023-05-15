@@ -19,7 +19,7 @@ const (
 	TypeFilled          = "FILLED"
 	TypeIn              = "IN"
 	TypeInt             = "INT"
-	TypeIp              = "IP"
+	TypeIP              = "IP"
 	TypeLength          = "LENGTH"
 	TypeMap             = "MAP"
 	TypeMax             = "MAX"
@@ -34,7 +34,8 @@ const (
 	TypeStartsWith      = "STARTS_WITH"
 	TypeString          = "STRING"
 	TypeStruct          = "STRUCT"
-	TypeUrl             = "URL"
+	TypeURL             = "URL"
+	TypeUUID            = "UUID"
 )
 
 const (
