@@ -20,6 +20,8 @@ type numberType interface {
 	integerType | floatType
 }
 
+type Comparator func(value, expectedValue any) bool
+
 type Rule interface {
 	Apply(ctx context.Context, value any, data any) (newValue any, err ve.ValidationError)
 }
@@ -64,7 +66,7 @@ func Dereference(reference any) (value any, isNil bool) {
 		reflect.Func,
 		reflect.Chan:
 		if valueOf.IsNil() {
-			return nil, true
+			return valueOf.Interface(), true
 		}
 	}
 

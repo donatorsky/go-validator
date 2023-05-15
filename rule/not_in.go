@@ -7,10 +7,10 @@ import (
 	ve "github.com/donatorsky/go-validator/error"
 )
 
-type inRuleOption func(options *inRuleOptions)
+type notInRuleOption func(rule *notInRuleOptions)
 
-func In[T comparable](values []T, options ...inRuleOption) *inRule[T] {
-	opts := inRuleOptions{
+func NotIn[T comparable](values []T, options ...notInRuleOption) *notInRule[T] {
+	opts := notInRuleOptions{
 		comparator:      nil,
 		autoDereference: true,
 	}
@@ -19,7 +19,7 @@ func In[T comparable](values []T, options ...inRuleOption) *inRule[T] {
 		option(&opts)
 	}
 
-	r := inRule[T]{
+	r := notInRule[T]{
 		values:    values,
 		valuesMap: nil,
 		options:   opts,
@@ -36,14 +36,14 @@ func In[T comparable](values []T, options ...inRuleOption) *inRule[T] {
 	return &r
 }
 
-type inRule[T comparable] struct {
+type notInRule[T comparable] struct {
 	values             []T
 	valuesMap          map[T]any
 	customErrorMessage *string
-	options            inRuleOptions
+	options            notInRuleOptions
 }
 
-func (r *inRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
+func (r *notInRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.ValidationError) {
 	var newValue any
 	if r.options.autoDereference {
 		var isNil bool
@@ -59,56 +59,56 @@ func (r *inRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Validati
 	if r.options.comparator == nil {
 		comparableValue, ok := newValue.(T)
 		if !ok {
-			return value, NewInValidationError(r.values)
+			return value, nil
 		}
 
 		_, exists := r.valuesMap[comparableValue]
 		if exists {
-			return value, nil
+			return value, NewNotInValidationError(r.values)
 		}
 	} else {
 		for _, v := range r.values {
 			if r.options.comparator(newValue, v) {
-				return value, nil
+				return value, NewNotInValidationError(r.values)
 			}
 		}
 	}
 
-	return value, NewInValidationError(r.values)
+	return value, nil
 }
 
-func NewInValidationError[T any](values []T) InValidationError[T] {
-	return InValidationError[T]{
+func NewNotInValidationError[T any](values []T) NotInValidationError[T] {
+	return NotInValidationError[T]{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: ve.TypeIn,
+			Rule: ve.TypeNotIn,
 		},
 		Values: values,
 	}
 }
 
-type InValidationError[T any] struct {
+type NotInValidationError[T any] struct {
 	ve.BasicValidationError
 
 	Values []T `json:"values"`
 }
 
-func (e InValidationError[T]) Error() string {
-	return fmt.Sprintf("does not exist in %v", e.Values)
+func (e NotInValidationError[T]) Error() string {
+	return fmt.Sprintf("exists in %v", e.Values)
 }
 
-type inRuleOptions struct {
+type notInRuleOptions struct {
 	comparator      Comparator
 	autoDereference bool
 }
 
-func InRuleWithComparator(comparator Comparator) inRuleOption {
-	return func(options *inRuleOptions) {
-		options.comparator = comparator
+func NotInRuleWithComparator(comparator Comparator) notInRuleOption {
+	return func(rule *notInRuleOptions) {
+		rule.comparator = comparator
 	}
 }
 
-func InRuleWithoutAutoDereference() inRuleOption {
-	return func(options *inRuleOptions) {
-		options.autoDereference = false
+func NotInRuleWithoutAutoDereference() notInRuleOption {
+	return func(rule *notInRuleOptions) {
+		rule.autoDereference = false
 	}
 }

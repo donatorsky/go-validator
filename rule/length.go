@@ -46,6 +46,9 @@ func (r *lengthRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Vali
 			if CompareNumbers(valueOf.Len(), r.length) != 0 {
 				return value, NewLengthValidationError(ve.SubtypeMap, r.length)
 			}
+
+		default:
+			return value, NewLengthValidationError(ve.SubtypeInvalid, r.length)
 		}
 	}
 
@@ -55,26 +58,31 @@ func (r *lengthRule[T]) Apply(_ context.Context, value any, _ any) (any, ve.Vali
 func NewLengthValidationError[T integerType](st string, threshold T) LengthValidationError[T] {
 	return LengthValidationError[T]{
 		BasicValidationError: ve.BasicValidationError{
-			Rule: fmt.Sprintf("%s.%s", ve.TypeLength, st),
+			Rule: ve.TypeLength,
 		},
-		Threshold: threshold,
+		Type:   st,
+		Length: threshold,
 	}
 }
 
 type LengthValidationError[T integerType] struct {
 	ve.BasicValidationError
 
-	Threshold T `json:"threshold"`
+	Type   string `json:"type"`
+	Length T      `json:"length"`
 }
 
 func (e LengthValidationError[T]) Error() string {
-	switch e.Rule {
-	case ve.TypeLength + "." + ve.SubtypeSlice,
-		ve.TypeLength + "." + ve.SubtypeArray,
-		ve.TypeLength + "." + ve.SubtypeMap:
-		return fmt.Sprintf("must have exactly %v items", e.Threshold)
+	switch e.Type {
+	case ve.SubtypeString:
+		return fmt.Sprintf("must be exactly %v characters long", e.Length)
+
+	case ve.SubtypeSlice,
+		ve.SubtypeArray,
+		ve.SubtypeMap:
+		return fmt.Sprintf("must have exactly %v items", e.Length)
 
 	default:
-		return fmt.Sprintf("must be exactly %v characters long", e.Threshold)
+		return "length cannot be determined"
 	}
 }

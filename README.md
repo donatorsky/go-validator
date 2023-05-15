@@ -582,7 +582,9 @@ Checks whether a value is after `after` date.
 
 **Applies to:**
 
-Any value. Passes only when a value implements `afterComparable` interface and is after `after` date.
+- `nil`: passes.
+- `afterComparable`: passes only when a value is after `after` date.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -598,7 +600,9 @@ Checks whether a value is after or equal to `afterOrEqual` date.
 
 **Applies to:**
 
-Any value. Passes only when a value implements `afterOrEqualComparable` interface and is after or equal to `afterOrEqual` date.
+- `nil`: passes.
+- `afterOrEqualComparable`: passes only when a value is after or equal to `afterOrEqual` date.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -614,7 +618,8 @@ Checks and ensures that a value is of array type.
 
 **Applies to:**
 
-Any value. Passes only when a value is of array type or its pointer, any length and element type.
+- `nil`: passes.
+- `any`: passes only when a value is of array type or its pointer, any length and element type.
 
 **Modifies output:**
 
@@ -622,7 +627,7 @@ No.
 
 **Bails:**
 
-Yes, when a value is not of array type.
+Yes.
 
 ### `ArrayOf[Out any]()`
 
@@ -630,15 +635,17 @@ Checks and ensures that a value is of `[n]Out` type.
 
 **Applies to:**
 
-Any value. Passes only when a value is of `[n]Out` type or its pointer, any length, or `nil` array of any type.
+- `nil`: passes.
+- `any`: passes only when a value is of `[n]Out` type or its pointer, any length.
 
 **Modifies output:**
 
-Yes. Returns `nil` slice of `[0]Out` type for `nil` values. Returns input value otherwise.
+- `nil`: nil array of `[0]Out`.
+- `any`: input value.
 
 **Bails:**
 
-Yes, when a value is not of `[n]Out` type or its pointer.
+Yes.
 
 ### `Before(before time.Time)`
 
@@ -646,7 +653,8 @@ Checks whether a value is before `before` date.
 
 **Applies to:**
 
-Any value. Passes only when a value implements `beforeComparable` interface and is before `before` date.
+- `nil`: passes.
+- `any`: passes only when a value implements `beforeComparable` interface and is before `before` date.
 
 **Modifies output:**
 
@@ -662,7 +670,8 @@ Checks whether a value is before or equal to `beforeOrEqual` date.
 
 **Applies to:**
 
-Any value. Passes only when a value implements `beforeOrEqualComparable` interface and is before or equal to `beforeOrEqual` date.
+- `nil`: passes.
+- `any`: passes only when a value implements `beforeOrEqualComparable` interface and is before or equal to `beforeOrEqual` date.
 
 **Modifies output:**
 
@@ -678,9 +687,10 @@ Checks whether a value is between `min` and `max`, inclusive.
 
 **Applies to:**
 
+- `nil`: passes.
 - `numberType`: checks if a value is between `min` and `max`.
 - `string`: checks if string's length is between `min` and `max`.
-- `slice`, `array`: checks if slice/array has at least `min` and `max` elements.
+- `slice`, `array`: checks if slice/array has between `min` and `max` elements.
 - `map`: checks if map has at least `min` and `max` keys.
 
 **Modifies output:**
@@ -697,9 +707,10 @@ Checks whether a value is between `min` and `max`, exclusive.
 
 **Applies to:**
 
+- `nil`: passes.
 - `numberType`: checks if a value is between `min` and `max`.
 - `string`: checks if string's length is between `min` and `max`.
-- `slice`, `array`: checks if slice/array has at least `min` and `max` elements.
+- `slice`, `array`: checks if slice/array has between `min` and `max` elements.
 - `map`: checks if map has at least `min` and `max` keys.
 
 **Modifies output:**
@@ -716,22 +727,24 @@ Checks and ensures that a value is of `bool` type.
 
 **Applies to:**
 
+- `nil`: any value.
 - `bool`: any value.
 - `integerType`: when a value equals to `0` or `1`.
 - `floatType`: when a value equals to `0.0` or `1.0`.
 - `string`: when string is convertible to `bool` according to the `strconv.ParseBool` function.
+- `any`: fails.
 
 **Modifies output:**
 
 - `nil`: returns `*bool` nil pinter.
-- `bool`: returns unchanged value.
+- `bool`: input value.
 - `integerType`: `false` when `0`, `true` when `1`.
 - `floatType`: `false` when `0.0`, `true` when `1.0`.
 - `string`: according to the `strconv.ParseBool` function.
 
 **Bails:**
 
-Yes, when a value is not of `bool` type, its pointer or cannot be converted to it.
+Yes.
 
 ### `Date()`
 
@@ -739,14 +752,15 @@ Checks whether a value is of `time.Time` type, its pointer or valid date string 
 
 **Applies to:**
 
-- `nil`.
+- `nil`: passes.
 - `time.Duration`: any value.
 - `string`: when string is convertible to `time.Duration` according to the `time.Parse` function and `time.RFC3339Nano` format.
+- `any`: fails.
 
 **Modifies output:**
 
-- `nil`: returns `*time.Time` nil pinter.
-- `time.Time`: returns unchanged value.
+- `nil`: returns `*time.Time` nil pointer.
+- `time.Time`: input value.
 - `string`: according to the `time.Parse` function.
 
 **Bails:**
@@ -759,15 +773,52 @@ Checks whether a value is of `time.Time` type, its pointer or valid date string 
 
 **Applies to:**
 
-- `nil`.
+- `nil`: passes.
 - `time.Duration`: any value.
 - `string`: when string is convertible to `time.Duration` according to the `time.Parse` function and `format` format.
+- `any`: fails.
 
 **Modifies output:**
 
 - `nil`: returns `*time.Time` nil pinter.
-- `time.Time`: returns unchanged value.
+- `time.Time`: input value.
 - `string`: according to the `time.Parse` function.
+
+**Bails:**
+
+No.
+
+### `DoesntEndWith(suffix string, suffixes ...string)`
+
+Checks whether a value is a string not ending with any of provided suffixes.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string does not end with any of provided suffixes (case-sensitive).
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `DoesntStartWith(prefix string, prefixes ...string)`
+
+Checks whether a value is a string not starting with any of provided prefixes.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string does not start with any of provided prefixes (case-sensitive).
+- `any`: fails.
+
+**Modifies output:**
+
+No.
 
 **Bails:**
 
@@ -779,8 +830,10 @@ Checks whether a value is of `time.Duration` type, its pointer or valid duration
 
 **Applies to:**
 
+- `nil`: passes.
 - `time.Duration`: any value.
 - `string`: when string is convertible to `time.Duration` according to the `time.ParseDuration` function.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -798,7 +851,9 @@ Checks whether a value is valid email address, according to the `net/mail.ParseA
 
 **Applies to:**
 
-Any value. Passes only when a value is of `string` type or its pointer and was successfully parsed by `net/mail.ParseAddress` function.
+- `nil`: passes.
+- `string`: passes only when a value is successfully parsed by `net/mail.ParseAddress` function.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -814,11 +869,50 @@ Checks whether a value is valid email address, according to the `net/mail.ParseA
 
 **Applies to:**
 
-Any value. Passes only when a value is of `string` type or its pointer and was successfully parsed by `net/mail.ParseAddress` function.
+- `nil`: passes.
+- `string`: passes only when a value is successfully parsed by `net/mail.ParseAddress` function.
+- `any`: fails.
 
 **Modifies output:**
 
-Yes. Unlike the `Email()` rule, it returns the email address of the string. E.g. given a value `Foo Bar <foo@bar.baz> (some comment)`, the output will be `foo@bar.baz`.
+- `nil`: input value.
+- `string`: unlike the `Email()` rule, it returns the email address of the string. E.g. given a value `Foo Bar <foo@bar.baz> (some comment)`, the output will be `foo@bar.baz`.
+
+**Bails:**
+
+No.
+
+### `EndsWith(suffix string)`
+
+Checks whether a value is a string ending with one of provided suffixes.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string ends with one of provided suffixes (case-sensitive).
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Filled()`
+
+Checks whether a value is not empty when it is present.
+
+**Applies to:**
+
+- `nil`: passes.
+- `*any`: passes.
+- `!nil`: checks if value is not a zero value.
+
+**Modifies output:**
+
+No.
 
 **Bails:**
 
@@ -830,7 +924,9 @@ Checks and ensures that a value is of `Out` type or its pointer.
 
 **Applies to:**
 
-Any value. Passes only when a value is of `Out` type or its pointer.
+- `nil`: passes.
+- `floatType`: passes.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -838,7 +934,7 @@ No.
 
 **Bails:**
 
-Yes, when a value is not of `Out` type or its pointer.
+Yes.
 
 ### `In[T comparable](values []T, options ...inRuleOption)`
 
@@ -851,7 +947,9 @@ Checks whether a value exists in `values`.
 
 **Applies to:**
 
-Any value. Passes only when a value exists in `values`, optionally using custom `comparator`.
+- `nil`: passes with auto-dereference enabled. Otherwise, fails when not present in `values`.
+- `comparable`: passes only when a value exists in `values`, optionally using custom `comparator`.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -867,7 +965,9 @@ Checks and ensures that a value is of `Out` type or its pointer.
 
 **Applies to:**
 
-Any value. Passes only when a value is of `Out` type or its pointer.
+- `nil`: passes.
+- `integerType`: passes only when a value is of `Out` type or its pointer.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -875,7 +975,25 @@ No.
 
 **Bails:**
 
-Yes, when a value is not of `Out` type or its pointer.
+Yes.
+
+### `IP()`
+
+Checks whether a value is a string in IP v4 or v6 format.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if a value is in IP v4 or v6 format according to the `net.ParseIP` function.
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
 
 ### `Length[T integerType](length T)`
 
@@ -883,9 +1001,11 @@ Checks whether a value is exactly `length`.
 
 **Applies to:**
 
+- `nil`: passes.
 - `string`: checks if string's length is exactly `length` characters.
 - `slice`, `array`: checks if slice/array has exactly `length` elements.
 - `map`: checks if map has exactly `length` keys.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -901,7 +1021,9 @@ Checks and ensures that a value is of map type.
 
 **Applies to:**
 
-Any value. Passes only when a value is of map type or its pointer, any length and key/value type.
+- `nil`: passes.
+- `map`: passes.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -909,7 +1031,7 @@ No.
 
 **Bails:**
 
-Yes, when a value is not of map type.
+Yes.
 
 ### `Max[T numberType](max T)`
 
@@ -917,10 +1039,33 @@ Checks whether a value is at most `max`.
 
 **Applies to:**
 
+- `nil`: passes.
 - `numberType`: checks if a value is at most `max` .
 - `string`: checks if string's length is at most `max` characters.
 - `slice`, `array`: checks if slice/array has at most `max` elements.
 - `map`: checks if map has at most `max` keys.
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `MaxExclusive[T numberType](max T)`
+
+Checks whether a value is less than `max`.
+
+**Applies to:**
+
+- `nil`: passes.
+- `numberType`: checks if a value is less than `max` .
+- `string`: checks if string's length is less than `max` characters.
+- `slice`, `array`: checks if slice/array has less than `max` elements.
+- `map`: checks if map has less than `max` keys.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -936,10 +1081,113 @@ Checks whether a value is at least `min`.
 
 **Applies to:**
 
+- `nil`: passes.
 - `numberType`: checks if a value is at least `min`.
 - `string`: checks if string's length is at least `min` characters.
 - `slice`, `array`: checks if slice/array has at least `min` elements.
 - `map`: checks if map has at least `min` keys.
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `MinExclusive[T numberType](min T)`
+
+Checks whether a value is greater than `min`.
+
+**Applies to:**
+
+- `nil`: passes.
+- `numberType`: checks if a value is greater than `min`.
+- `string`: checks if string's length is more than `min` characters.
+- `slice`, `array`: checks if slice/array has more than `min` elements.
+- `map`: checks if map has more than `min` keys.
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `NotIn[T comparable](values []T, options ...notInRuleOption)`
+
+Checks whether a value does not exist in `values`.
+
+**Options:**
+
+- `NotInRuleWithComparator(comparator Comparator)`: sets custom elements comparator. `comparator` receives an input value and each element of `values`, one at a time.
+- `NotInRuleWithoutAutoDereference()`: disables automatic dereference of a value, i.e. `values` will be compared against the exact input value which may be a pointer.
+
+**Applies to:**
+
+- `nil`: passes with auto-dereference enabled. Otherwise, fails when present in `values`.
+- `comparable`: passes only when a value does not exist in `values`, optionally using custom `comparator`.
+- `any`: passes.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `NotRegex(regex *regexp.Regexp)`
+
+Checks whether a value does not match `regex` expression.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string does not match `regex` expression.
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `Numeric()`
+
+Checks whether a value is a numeric value or a string that can be converted to one.
+
+**Applies to:**
+
+- `nil`: passes.
+- `numberType`, `complex64`, `complex128`: passes.
+- `string`: passes only when a value can be converted to number using `strconv.ParseInt`, `strconv.ParseUint`, `strconv.ParseFloat` and `strconv.ParseComplex`, in that order.
+- `any`: fails.
+
+**Modifies output:**
+
+- `nil`: unchanged value.
+- `numberType`, `complex64`, `complex128`: unchanged value.
+- `string`: value converted to number.
+
+**Bails:**
+
+No.
+
+### `Regex(regex *regexp.Regexp)`
+
+Checks whether a value matches `regex` expression.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string matches `regex` expression.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -951,11 +1199,11 @@ No.
 
 ### `Required()`
 
-Checks whether a value is not nil.
+Checks whether a value is not `nil`.
 
 **Applies to:**
 
-Any value.
+- `any`: passes only when a value not `nil`.
 
 **Modifies output:**
 
@@ -963,15 +1211,17 @@ No.
 
 **Bails:**
 
-Yes. When value is nil.
+Yes.
 
 ### `Slice()`
 
-Checks and ensures that a value is of slice type.
+Checks and ensures that a value is of slice type or its pointer.
 
 **Applies to:**
 
-Any value. Passes only when a value is of slice type or its pointer, any length and element type.
+- `nil`: passes.
+- `slice`: passes.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -979,7 +1229,7 @@ No.
 
 **Bails:**
 
-Yes, when a value is not of slice type or its pointer.
+Yes.
 
 ### `SliceOf[Out any]()`
 
@@ -987,15 +1237,36 @@ Checks and ensures that a value is of `[]Out` type.
 
 **Applies to:**
 
-Any value. Passes only when a value is of `[]Out` type or its pointer, any length, or `nil` slice of any type.
+- `nil`: passes.
+- `slice`: passes only when a value is of `[]Out` type or its pointer, any length.
+- `any`: fails.
 
 **Modifies output:**
 
-Yes. Returns `nil` slice of `[]Out` type for `nil` values. Returns input value otherwise.
+- `nil`: returns `nil` slice of `[]Out` type.
+- `any`: input value.
 
 **Bails:**
 
-Yes, when a value is not of `[]Out` type or its pointer.
+Yes.
+
+### `StartsWith(prefix string, prefixes ...string)`
+
+Checks whether a value is a string starting with one of provided prefixes.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string starts with one of provided prefixes (case-sensitive).
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
 
 ### `String()`
 
@@ -1003,15 +1274,18 @@ Checks and ensures that a value is of `string` type or its pointer.
 
 **Applies to:**
 
-Any value. Passes only when a value is of `string` type or its pointer.
+- `nil`: passes.
+- `string`: passes.
+- `any`: fails.
 
 **Modifies output:**
 
-No.
+- `nil`: returns string nil pointer.
+- `string`: input value.
 
 **Bails:**
 
-Yes, when a value is not of `string` type or its pointer.
+Yes.
 
 ### `Struct()`
 
@@ -1019,7 +1293,9 @@ Checks and ensures that a value is of struct type.
 
 **Applies to:**
 
-Any value. Passes only when a value is of struct type or its pointer, any type.
+- `nil`: passes.
+- `struct`: passes.
+- `any`: fails.
 
 **Modifies output:**
 
@@ -1027,7 +1303,51 @@ No.
 
 **Bails:**
 
-Yes, when a value is not of struct type.
+Yes.
+
+### `URL()`
+
+Checks whether a value is a valid URL string.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string is a valid URL according to `net/url.ParseRequestURI` function.
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
+
+### `UUID(options ...uuidRuleOption)`
+
+Checks whether a value is a valid RFC 4122 (version 1, 3, 4 or 5) universally unique identifier (UUID).
+
+**Options:**
+
+- `UUIDRuleVersion1()`: allows for UUIDv1.
+- `UUIDRuleVersion3()`: allows for UUIDv3.
+- `UUIDRuleVersion4()`: allows for UUIDv4.
+- `UUIDRuleVersion5()`: allows for UUIDv5.
+- `UUIDRuleDisallowNilUUID()`: disallows for nil UUID, i.e. `00000000-0000-0000-0000-000000000000`.
+
+**Applies to:**
+
+- `nil`: passes.
+- `string`: checks if string is a valid UUID.
+- `any`: fails.
+
+**Modifies output:**
+
+No.
+
+**Bails:**
+
+No.
 
 ## Custom validation
 
