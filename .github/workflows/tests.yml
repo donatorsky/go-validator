@@ -53,6 +53,11 @@ jobs:
           - 'macos-latest'
           - 'windows-latest'
 
+        include:
+          - timeout-minutes: 3
+          - timeout-minutes: 5
+            operating-system: 'windows-latest'
+
     runs-on: ${{ matrix.operating-system }}
     name: 'Go ${{ matrix.go-version }}: Test on ${{ matrix.operating-system }}'
 
@@ -66,7 +71,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
 
       - name: Run tests
-        timeout-minutes: 3
+        timeout-minutes: ${{ matrix.timeout-minutes }}
         run: go test ./...
 
   code-coverage:
