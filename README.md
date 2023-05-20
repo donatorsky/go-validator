@@ -23,11 +23,17 @@ The library is still a work in progress. More details soon.
 
 Each validator has a context counterpart which lets you set the context used during validation. It will be passed to rules. The default context is `context.Background()`.
 
-### `ForMap`, `ForMapWithContext`
+### `ForMap(data map[string]any, rules RulesMap, options ...forMapValidatorOption)`, `ForMapWithContext`
 
 Validates a `map[string]any`. You can specify a map of rules for each key and internal values (either slices, arrays, maps or structs).
 
 Returns `ErrorsBag` with keys being the map keys of input map.
+
+#### Options
+
+##### `ForMapWithDataCollector(collector DataCollector)`
+
+Sets a `DataCollector` instance to be used while validating data which will collect all successfully validated data.
 
 #### Example
 
@@ -68,7 +74,7 @@ validator.ForMap(
 )
 ```
 
-### `ForStruct`, `ForStructWithContext`
+### `ForStruct(data any, rules RulesMap, options ...forStructValidatorOption)`, `ForStructWithContext`
 
 Validates a struct. You can specify a map of rules for each field name and internal values (either slices, arrays, maps or structs).
 
@@ -77,6 +83,12 @@ Note that you can also use custom name for a field using `validation` tag.
 You can also pass pointer which will be automatically dereferenced.
 
 Returns `ErrorsBag` with keys being the field names (or values from `validation` if provided) of input struct.
+
+#### Options
+
+##### `ForStructWithDataCollector(collector DataCollector)`
+
+Sets a `DataCollector` instance to be used while validating data which will collect all successfully validated data.
 
 #### Example
 
@@ -129,13 +141,19 @@ validator.ForStruct(
 )
 ```
 
-### `ForSlice`, `ForSliceWithContext`
+### `ForSlice(data any, rules []vr.Rule, options ...forSliceValidatorOption)`, `ForSliceWithContext`
 
 Validates both a slice `[]any` or an array `[size]any`. You can specify a list of rules for each element in given slice/array.
 
 You can also pass pointer which will be automatically dereferenced.
 
 Returns `ErrorsBag` with keys being the indices of input slice/array.
+
+#### Options
+
+##### `ForSliceWithDataCollector(collector DataCollector)`
+
+Sets a `DataCollector` instance to be used while validating data which will collect all successfully validated data.
 
 #### Example
 
@@ -153,13 +171,19 @@ validator.ForSlice(
 )
 ```
 
-### `ForValue`, `ForValueWithContext`
+### `ForValue[In any](value In, rules []vr.Rule, options ...forValueValidatorOption)`, `ForValueWithContext`
 
 Validates any value. You can specify a list of rules for given value.
 
 If you pass a pointer, it will not be dereferenced.
 
 Returns a slice of `ValidationError`.
+
+#### Options
+
+##### `ForValueWithValueExporter[Out any](value *Out)`
+
+Sets a pointer to a variable to which data will be exported after successful validation.
 
 #### Example
 

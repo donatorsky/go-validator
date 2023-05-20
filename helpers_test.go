@@ -212,3 +212,12 @@ func assertErrorsBagContainsErrorsFromBagForField(
 ) bool {
 	return assertErrorsBagContainsErrorsForField(t, errorsBag, valueValidationErrorsBag.Get(field), field)
 }
+
+func assertCollectorDoesNotHaveKey(t *testing.T, collector DataCollector, key string) bool {
+	return assert.False(t, collector.Has(key), fmt.Sprintf("Data collector is expected to not have %q key", key))
+}
+
+func assertCollectorHasValue(t *testing.T, collector DataCollector, key string, value any) bool {
+	return assert.True(t, collector.Has(key), fmt.Sprintf("Data collector is expected to have %q key", key)) &&
+		assert.Equal(t, value, collector.Get(key), fmt.Sprintf("Data collector %q key is expected to be %v", key, value))
+}

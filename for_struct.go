@@ -18,7 +18,7 @@ func ForStructWithContext(ctx context.Context, data any, rules RulesMap, options
 	data, _ = vr.Dereference(data)
 
 	if reflect.TypeOf(data).Kind() != reflect.Struct {
-		return nil, ve.ErrNotStructType
+		return nil, ve.NotStructTypeError{}
 	}
 
 	opts := &validatorOptions{}

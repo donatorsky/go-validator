@@ -2,6 +2,7 @@ package validator
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -96,7 +97,7 @@ func Test_ForStruct_FailsWhenInvalidDataProvided(t *testing.T) {
 	_, err := ForStruct(1, nil)
 
 	// then
-	require.ErrorIs(t, err, ve.ErrNotStructType)
+	require.ErrorIs(t, err, ve.NotStructTypeError{})
 }
 
 func Test_ForStructWithContext(t *testing.T) {
@@ -179,5 +180,94 @@ func Test_ForStructWithContext_FailsWhenInvalidDataProvided(t *testing.T) {
 	_, err := ForStructWithContext(context.TODO(), 1, nil)
 
 	// then
-	require.ErrorIs(t, err, ve.ErrNotStructType)
+	require.ErrorIs(t, err, ve.NotStructTypeError{})
+}
+
+func Test_ForStructWithContext_ReturnsErrorFromOption(t *testing.T) {
+	// given
+	var (
+		ctx  = context.TODO()
+		data = someRequest{
+			Value: fakerInstance.Int(),
+			Slice: []int{
+				fakerInstance.IntBetween(-100, -1),
+				fakerInstance.IntBetween(0, 100),
+				fakerInstance.IntBetween(1000, 9999),
+			},
+		}
+
+		errFromOption = errors.New(fakerInstance.Lorem().Sentence(6))
+	)
+
+	// when
+	errorsBag, err := ForStructWithContext(ctx, data, nil, func(_ *validatorOptions) error {
+		return errFromOption
+	})
+
+	// then
+	require.ErrorIs(t, err, errFromOption)
+	require.Nil(t, errorsBag)
+}
+
+func Test_ForStructWithContext_WithDataCollector(t *testing.T) {
+	// given
+	var (
+		ctx  = context.TODO()
+		data = someRequest{
+			Value: fakerInstance.Int(),
+			Slice: []int{
+				fakerInstance.IntBetween(-100, -1),
+				fakerInstance.IntBetween(0, 100),
+				fakerInstance.IntBetween(1000, 9999),
+			},
+		}
+	)
+
+	t.Run("value is not assigned when validation error occurs", func(t *testing.T) {
+		collector := NewMapDataCollector()
+
+		// when
+		errorsBag, err := ForStructWithContext(ctx, data, RulesMap{
+			"value": {
+				vr.Required(),
+				vr.Custom(func(_ context.Context, _ any, _ any) (any, error) {
+					return nil, errors.New("validation failed")
+				}),
+			},
+		}, ForStructWithDataCollector(collector))
+
+		// then
+		require.NoError(t, err)
+		require.True(t, errorsBag.Has("value"))
+		require.True(t, assertCollectorDoesNotHaveKey(t, collector, "value"))
+		require.True(t, assertCollectorDoesNotHaveKey(t, collector, "slice"))
+	})
+
+	t.Run("changed value is assigned after successful validation", func(t *testing.T) {
+		var newValue = fakerInstance.Int()
+
+		collector := NewMapDataCollector()
+
+		// when
+		errorsBag, err := ForStructWithContext(ctx, data, RulesMap{
+			"value": {
+				vr.Required(),
+				vr.Custom(func(_ context.Context, _ int, _ any) (int, error) {
+					return newValue, nil
+				}),
+			},
+			"slice.*": {
+				vr.Required(),
+			},
+		}, ForStructWithDataCollector(collector))
+
+		// then
+		require.NoError(t, err)
+		require.False(t, errorsBag.Has("value"))
+		require.True(t, assertCollectorHasValue(t, collector, "value", newValue))
+		require.True(t, assertCollectorDoesNotHaveKey(t, collector, "slice"))
+		require.True(t, assertCollectorHasValue(t, collector, "slice.0", data.Slice[0]))
+		require.True(t, assertCollectorHasValue(t, collector, "slice.1", data.Slice[1]))
+		require.True(t, assertCollectorHasValue(t, collector, "slice.2", data.Slice[2]))
+	})
 }

@@ -18,7 +18,7 @@ func ForSliceWithContext(ctx context.Context, data any, rules []vr.Rule, options
 	data, _ = vr.Dereference(data)
 
 	if kind := reflect.TypeOf(data).Kind(); kind != reflect.Slice && kind != reflect.Array {
-		return nil, ve.ErrNotListType
+		return nil, ve.NotListTypeError{}
 	}
 
 	opts := &validatorOptions{}

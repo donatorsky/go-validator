@@ -19,6 +19,7 @@ func (c mapDataCollector) Set(key string, value any) {
 func (c mapDataCollector) Get(key string) any {
 	return c[key]
 }
+
 func (c mapDataCollector) Has(key string) bool {
 	_, exists := c[key]
 
