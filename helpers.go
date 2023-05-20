@@ -39,10 +39,10 @@ func applyRules(ctx context.Context, data any, rules []vr.Rule, fieldValue field
 	}
 
 	if !anyRuleFailed && options.valueExporter != nil {
-		valueType := reflect.TypeOf(value)
 		targetValue := options.valueExporter.Elem()
 		targetType := targetValue.Type()
-		if !valueType.ConvertibleTo(targetType) {
+
+		if valueType := reflect.TypeOf(value); !valueType.ConvertibleTo(targetType) {
 			return ve.ValueExporterTypeMismatchError{
 				ValueType:  valueType.String(),
 				TargetType: targetType.String(),
