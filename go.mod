@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/golang/mock v1.6.0
-	github.com/jaswdr/faker v1.19.0
+	github.com/jaswdr/faker v1.19.1
 	github.com/stretchr/testify v1.8.4
 )
 
